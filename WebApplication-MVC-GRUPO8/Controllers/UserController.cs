@@ -65,7 +65,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             return View(user);
         }
 
-        // GET: User/Edit/5
+        // GET: User/Edit/5//
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
