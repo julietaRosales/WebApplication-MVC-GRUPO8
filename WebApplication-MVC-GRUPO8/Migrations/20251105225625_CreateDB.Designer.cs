@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication_MVC_GRUPO8.Context;
 
@@ -10,9 +11,11 @@ using WebApplication_MVC_GRUPO8.Context;
 namespace WebApplication_MVC_GRUPO8.Migrations
 {
     [DbContext(typeof(SistemaMantenimientoDBContext))]
-    partial class SistemaMantenimientoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251105225625_CreateDB")]
+    partial class CreateDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
