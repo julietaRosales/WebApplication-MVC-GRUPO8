@@ -1,0 +1,137 @@
+﻿@model IEnumerable<WebApplication_MVC_GRUPO8.Models.Incidencia>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.imagenIncidencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fechaReporte)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.idUsuario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.idEncargado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.idTecnico)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fechaAsignacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.sla)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.justificacionDescarte)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fechaInicioReparacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fechaFinReparacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.costoTotal)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.descripcionGasto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.imagenFinalIncidencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.prioridad)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.estadoIncidencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.complejidad)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.imagenIncidencia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fechaReporte)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.idUsuario)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.idEncargado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.idTecnico)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fechaAsignacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.sla)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.justificacionDescarte)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fechaInicioReparacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fechaFinReparacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.costoTotal)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.descripcionGasto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.imagenFinalIncidencia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.prioridad)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.estadoIncidencia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.complejidad)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
