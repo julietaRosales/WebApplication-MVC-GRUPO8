@@ -1,0 +1,48 @@
+﻿@model WebApplication_MVC_GRUPO8.Models.Comentario
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Comentario</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="texto" class="control-label"></label>
+                <input asp-for="texto" class="form-control" />
+                <span asp-validation-for="texto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="idUsuario" class="control-label"></label>
+                <input asp-for="idUsuario" class="form-control" />
+                <span asp-validation-for="idUsuario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="fechaComentario" class="control-label"></label>
+                <input asp-for="fechaComentario" class="form-control" />
+                <span asp-validation-for="fechaComentario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="idIncidencia" class="control-label"></label>
+                <input asp-for="idIncidencia" class="form-control" />
+                <span asp-validation-for="idIncidencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
