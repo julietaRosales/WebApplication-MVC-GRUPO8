@@ -17,6 +17,8 @@ namespace WebApplication_MVC_GRUPO8.Context
         public DbSet<User> Usuarios { get; set; }
 
         public DbSet<Categoria> Categorias { get; set; }
+
+        public DbSet<Comentario> Comentarios { get; set; }
     }
 
 }
