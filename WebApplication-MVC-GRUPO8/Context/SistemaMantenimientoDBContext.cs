@@ -19,6 +19,7 @@ namespace WebApplication_MVC_GRUPO8.Context
         public DbSet<Categoria> Categorias { get; set; }
 
         public DbSet<Comentario> Comentarios { get; set; }
+        public DbSet<Incidencia> Incidencias { get; set; }
     }
 
 }
