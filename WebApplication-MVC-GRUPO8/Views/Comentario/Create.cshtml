@@ -1,46 +1,48 @@
-﻿@model WebApplication_MVC_GRUPO8.Models.Comentario
+﻿@model WebApplication_MVC_GRUPO8.ViewModels.ComentarioViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                       Agregar comentario a la incidencia #@Model.idIncidencia
+                    </h4>
+                </div>
+                <div class="card-body">
 
-<h4>Comentario</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="texto" class="control-label"></label>
-                <input asp-for="texto" class="form-control" />
-                <span asp-validation-for="texto" class="text-danger"></span>
+                    @* Mensajes de error general *@
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    @* Formulario *@
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label asp-for="texto" class="form-label">
+                                 Comentario
+                            </label>
+                            <input asp-for="texto" class="form-control" placeholder="Agregar comentario" />
+                            <span asp-validation-for="texto" class="text-danger"></span>
+                        </div>
+                        @* campo para enviar idIncidencia *@
+                        <input type="hidden" asp-for="idIncidencia" />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-action="Index" class="btn btn-danger">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                 Agregar comentario
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="idUsuario" class="control-label"></label>
-                <input asp-for="idUsuario" class="form-control" />
-                <span asp-validation-for="idUsuario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fechaComentario" class="control-label"></label>
-                <input asp-for="fechaComentario" class="form-control" />
-                <span asp-validation-for="fechaComentario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idIncidencia" class="control-label"></label>
-                <input asp-for="idIncidencia" class="form-control" />
-                <span asp-validation-for="idIncidencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
