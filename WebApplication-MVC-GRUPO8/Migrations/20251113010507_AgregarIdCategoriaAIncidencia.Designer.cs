@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication_MVC_GRUPO8.Context;
 
@@ -11,9 +12,11 @@ using WebApplication_MVC_GRUPO8.Context;
 namespace WebApplication_MVC_GRUPO8.Migrations
 {
     [DbContext(typeof(SistemaMantenimientoDBContext))]
-    partial class SistemaMantenimientoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251113010507_AgregarIdCategoriaAIncidencia")]
+    partial class AgregarIdCategoriaAIncidencia
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -92,6 +95,7 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("descripcionGasto")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("estadoIncidencia")
@@ -109,7 +113,7 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                     b.Property<DateTime>("fechaReporte")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("idCategoria")
+                    b.Property<int?>("idCategoria")
                         .HasColumnType("int");
 
                     b.Property<int?>("idEncargado")
@@ -122,6 +126,7 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("imagenFinalIncidencia")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("imagenIncidencia")
@@ -129,6 +134,7 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("justificacionDescarte")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("prioridad")
@@ -200,9 +206,7 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                 {
                     b.HasOne("WebApplication_MVC_GRUPO8.Models.Categoria", "Categoria")
                         .WithMany()
-                        .HasForeignKey("idCategoria")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("idCategoria");
 
                     b.HasOne("WebApplication_MVC_GRUPO8.Models.User", "Encargado")
                         .WithMany()
