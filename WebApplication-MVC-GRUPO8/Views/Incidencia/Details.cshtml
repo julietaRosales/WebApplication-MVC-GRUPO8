@@ -1,126 +1,352 @@
-﻿@model WebApplication_MVC_GRUPO8.Models.Incidencia
+﻿@model WebApplication_MVC_GRUPO8.ViewModels.DetalleIncidenciaViewModel
 
 @{
-    ViewData["Title"] = "Details";
+	ViewData["Title"] = "Detalle de Incidencia";
 }
 
-<h1>Details</h1>
+<div class="container mt-4">
+	<div class="row">
+		<div class="col-12">
+			<a asp-action="Index" class="btn btn-outline-secondary mb-3">
+				<i class="bi bi-arrow-left"></i> Volver al listado
+			</a>
 
-<div>
-    <h4>Incidencia</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.titulo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.titulo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.descripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.descripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.imagenIncidencia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.imagenIncidencia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.fechaReporte)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.fechaReporte)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.idUsuario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.idUsuario)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.idEncargado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.idEncargado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.idTecnico)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.idTecnico)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.fechaAsignacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.fechaAsignacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.sla)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.sla)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.justificacionDescarte)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.justificacionDescarte)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.fechaInicioReparacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.fechaInicioReparacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.fechaFinReparacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.fechaFinReparacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.costoTotal)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.costoTotal)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.descripcionGasto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.descripcionGasto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.imagenFinalIncidencia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.imagenFinalIncidencia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.prioridad)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.prioridad)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.estadoIncidencia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.estadoIncidencia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.complejidad)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.complejidad)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+			@* Header con título y estado *@
+			<div class="d-flex  mb-4">
+				<div>
+					@switch (Model.EstadoIncidencia)
+					{
+						case EstadoIncidencia.reportado:
+																			<span class="badge rounded-pill bg-info text-dark fs-6 ">Reportado</span>
+							break;
+						case EstadoIncidencia.asignado:
+																			<span class="badge rounded-pill bg-warning fs-6">Asignado</span>
+							break;
+						case EstadoIncidencia.enReparacion:
+																	<span class="badge rounded-pill bg-primary fs-6">En reparacion</span>
+							break;
+						case EstadoIncidencia.descartado:
+																	<span class="badge rounded-pill bg-danger fs-6">Descartado</span>
+							break;
+					}
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div>
+		<div>
+			@* @* Imagen principal *@
+	<div class="card mb-3" style="border-radius: 30px;">
+		  <div style=" overflow: hidden; display:flex; justify-content:center; height:350px; width:100%">
+						@if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
+						{ 
+							<img src="@Model.ImagenIncidencia" 
+							alt="@Model.Titulo" 
+							class="img-fluid" /> 
+						} 
+		 </div>
+  <div class="card-body">
+	<p class="card-text"> <i class="bi bi-bookmark" style="margin-right:10px"></i>@Model.NombreCategoria</p>
+	<h3 class="card-title">@Model.Titulo</h3>
+	<p class="card-text">@Model.Descripcion</p>
+
+					@if (Model.Prioridad.HasValue)
+					{
+												<dt class="col-sm-5">Prioridad:</dt>
+												<dd class="col-sm-7">
+							@switch (Model.Prioridad.Value)
+							{
+								case Prioridad.alta:
+																									<span class="badge bg-danger">Alta</span>
+									break;
+								case Prioridad.media:
+																									<span class="badge bg-warning text-dark">Media</span>
+									break;
+								case Prioridad.baja:
+																									<span class="badge bg-success">Baja</span>
+									break;
+							}
+												</dd>
+					}
+
+					@if (Model.Complejidad.HasValue)
+					{
+												<dt class="col-sm-5">Complejidad:</dt>
+												<dd class="col-sm-7">
+													<span class="badge bg-secondary">@Model.Complejidad.Value</span>
+												</dd>
+					}
+
+				<div class="card-body">
+					<dl class="row mb-0">
+						<dt class="col-sm-5">Reportado por:</dt>
+						<dd class="col-sm-7">@Model.NombreUsuarioReporta</dd>
+
+						<dt class="col-sm-5">Fecha Reporte:</dt>
+						<dd class="col-sm-7">@Model.FechaReporte.ToString("dd/MM/yyyy HH:mm")</dd>
+					</dl>
+					</div>
+  </div>
+  @* COMENTARIO *@
+				@{
+					var comentarios = ViewBag.Comentarios as List<WebApplication_MVC_GRUPO8.ViewModels.ComentarioListaVM>;
+				}
+
+				@if (comentarios != null && comentarios.Any())
+				{
+					<h4 style="margin-left: 20px;">Comentarios:</h4>
+
+				<ol class="list-group list-group-numbered">
+						@foreach (var c in comentarios)
+						{
+				  <li class="list-group-item d-flex justify-content-between align-items-start">
+					<div class="ms-2 me-auto">
+						  <div class="fw-bold">
+							<strong>@c.NombreUsuario @c.ApellidoUsuario</strong>  				
+					</div>
+								@c.Texto
+					</div>
+
+							<small class="text-muted">(@c.FechaComentario.ToString("dd/MM/yyyy HH:mm"))</small>
+				  </li>
+						}
+				</ol>
+				}
+				else
+				{
+					<p class="text-muted">No hay comentarios para esta incidencia.</p>
+				}
+			</div>
+			@* Card: Imagen final (si existe) *@
+			@if (!string.IsNullOrEmpty(Model.ImagenFinalIncidencia))
+			{
+								<div class="card shadow-sm mb-4">
+									<div class="card-header bg-success text-white">
+										<h5 class="mb-0"><i class="bi bi-check-circle"></i> Imagen Final</h5>
+									</div>
+									<div class="card-body p-0">
+										<img src="@Model.ImagenFinalIncidencia" 
+											 alt="Resultado final" 
+											 class="img-fluid w-100"
+											 style="max-height: 400px; object-fit: contain; background-color: #f8f9fa;">
+									</div>
+								</div>
+			}
+
+		</div>
+
+		<div class="col-lg-4">
+			@* Card: Personal asignado *@
+			@if (!string.IsNullOrEmpty(Model.NombreEncargado) || !string.IsNullOrEmpty(Model.NombreTecnico))
+			@* { *@
+			@* 					<div class="card shadow-sm mb-4"> *@
+			@* 						<div class="card-header"> *@
+			@* 							<h5 class="mb-0"><i class="bi bi-people"></i> Personal Asignado</h5> *@
+			@* 						</div> *@
+			@* 						<div class="card-body"> *@
+			@* 							<dl class="row mb-0"> *@
+			@* 				@if (!string.IsNullOrEmpty(Model.NombreEncargado) && Model.NombreEncargado != "Sin asignar") *@
+			@* 				{ *@
+			@* 													<dt class="col-sm-5">Encargado:</dt> *@
+			@* 													<dd class="col-sm-7">@Model.NombreEncargado</dd> *@
+			@* 				} *@
+
+			@* 				@if (!string.IsNullOrEmpty(Model.NombreTecnico) && Model.NombreTecnico != "Sin asignar") *@
+			@* 				{ *@
+			@* 													<dt class="col-sm-5">Técnico:</dt> *@
+			@* 													<dd class="col-sm-7">@Model.NombreTecnico</dd> *@
+			@* 				} *@
+
+			@* 				@if (Model.FechaAsignacion.HasValue) *@
+			@* 				{ *@
+			@* 													<dt class="col-sm-5">Fecha Asignación:</dt> *@
+			@* 													<dd class="col-sm-7">@Model.FechaAsignacion.Value.ToString("dd/MM/yyyy HH:mm")</dd> *@
+			@* 				} *@
+
+			@* 				@if (Model.Sla.HasValue) *@
+			@* 				{ *@
+			@* 													<dt class="col-sm-5">SLA (horas):</dt> *@
+			@* 													<dd class="col-sm-7">@Model.Sla.Value</dd> *@
+			@* 				} *@
+			@* 							</dl> *@
+			@* 						</div> *@
+			@* 					</div> *@
+			@* } *@
+
+			@* Card: Reparación *@
+			@if (Model.FechaInicioReparacion.HasValue || Model.CostoTotal.HasValue)
+			{
+								<div class="card shadow-sm mb-4">
+									<div class="card-header bg-info text-white">
+										<h5 class="mb-0"><i class="bi bi-tools"></i> Reparación</h5>
+									</div>
+									<div class="card-body">
+										<dl class="row mb-0">
+							@if (Model.FechaInicioReparacion.HasValue)
+							{
+																<dt class="col-sm-5">Fecha Inicio:</dt>
+																<dd class="col-sm-7">@Model.FechaInicioReparacion.Value.ToString("dd/MM/yyyy HH:mm")</dd>
+							}
+
+							@if (Model.FechaFinReparacion.HasValue)
+							{
+																<dt class="col-sm-5">Fecha Fin:</dt>
+																<dd class="col-sm-7">@Model.FechaFinReparacion.Value.ToString("dd/MM/yyyy HH:mm")</dd>
+							}
+
+							@if (Model.CostoTotal.HasValue)
+							{
+																<dt class="col-sm-5">Costo Total:</dt>
+																<dd class="col-sm-7">
+																	<strong class="text-success">$@Model.CostoTotal.Value.ToString("N2")</strong>
+																</dd>
+							}
+
+							@if (!string.IsNullOrEmpty(Model.DescripcionGasto))
+							{
+																<dt class="col-sm-12">Descripción del Gasto:</dt>
+																<dd class="col-sm-12">@Model.DescripcionGasto</dd>
+							}
+										</dl>
+									</div>
+								</div>
+			}
+
+			@* Card: Justificación descarte *@
+			@if (!string.IsNullOrEmpty(Model.JustificacionDescarte))
+			{
+								<div class="card shadow-sm mb-4 border-warning">
+									<div class="card-header bg-warning">
+										<h5 class="mb-0"><i class="bi bi-x-circle"></i> Descartada</h5>
+									</div>
+									<div class="card-body">
+										<p class="mb-0">@Model.JustificacionDescarte</p>
+									</div>
+								</div>
+			}
+
+			@* Botones de acción (según el estado) *@
+				<div class="d-flex gap-2">
+				@{
+					var rolActual = (RolUsuario)ViewBag.RolUsuarioActual;
+					var esTecnicoAsignado = (bool)ViewBag.EsTecnicoAsignado;
+				}
+
+				@* ADMINISTRADOR - Puede hacer todo *@
+				@if (rolActual == RolUsuario.administrador)
+				{
+					@if (Model.EstadoIncidencia == EstadoIncidencia.reportado)
+					{
+							
+								<a asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
+									@* <i class="bi bi-person-check"></i>  *@
+									Asignar Técnico
+								</a>
+									
+						
+								<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
+									@* <i class="bi bi-x-circle"></i> 	 *@
+									Descartar
+								</a>
+								
+
+					}
+
+					@if (Model.EstadoIncidencia == EstadoIncidencia.asignado)
+					{
+								<a asp-action="Evaluar" asp-route-id="@Model.Id" class="btn btn-info">
+									@* <i class="bi bi-clipboard-check"></i>  *@
+									Evaluar
+								</a>
+					}
+
+					@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion)
+					{
+								<a asp-action="FinalizarReparacion" asp-route-id="@Model.Id" class="btn btn-success">
+									@* <i class="bi bi-check-circle"></i> *@
+									Finalizar Reparación
+								</a>
+					}
+				}
+
+				@* ENCARGADO - Asigna, evalua y repara si se asigno a si mismo *@
+				@if (rolActual == RolUsuario.encargado)
+				{
+					@if (Model.EstadoIncidencia == EstadoIncidencia.reportado)
+					{
+								<a asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
+									<i class="bi bi-person-check"></i> 
+									@* Asignar Técnico *@
+								</a>
+								<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
+											<i class="bi bi-x-circle"></i>
+											@* Descartar *@
+								</a>
+					}
+
+					@* Si esta asignado y es el tecnico asignado *@
+					@if (Model.EstadoIncidencia == EstadoIncidencia.asignado && esTecnicoAsignado)
+					{
+								<a asp-action="Evaluar" asp-route-id="@Model.Id" class="btn btn-info">
+									@* <i class="bi bi-clipboard-check"></i> *@
+									Evaluar
+								</a>
+								 <a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger"> 
+								 	@* <i class="bi bi-x-circle"></i>  *@
+									 Descartar 
+								</a> 
+					}
+
+					@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion && esTecnicoAsignado)
+					{
+								<a asp-action="FinalizarReparacion" asp-route-id="@Model.Id" class="btn btn-success">
+									<i class="bi bi-check-circle"></i> Finalizar Reparación
+								</a>
+					}
+				}
+
+				@* TECNICO - Solo puede operar en sus incidencias asignadas *@
+				@if (rolActual == RolUsuario.tecnico && esTecnicoAsignado)
+				{
+					@if (Model.EstadoIncidencia == EstadoIncidencia.asignado)
+					{
+								<a asp-action="Evaluar" asp-route-id="@Model.Id" class="btn btn-info">
+									<i class="bi bi-clipboard-check"></i> Evaluar
+								</a>
+								<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
+									<i class="bi bi-x-circle"></i> Descartar
+								</a>
+					}
+
+					@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion)
+					{
+								<a asp-action="FinalizarReparacion" asp-route-id="@Model.Id" class="btn btn-success">
+									<i class="bi bi-check-circle"></i> Finalizar Reparación
+								</a>
+					}
+				}
+
+				@* USUARIO - No ve botones de acción, solo puede reportar *@
+				@if (rolActual == RolUsuario.usuario)
+				{
+						<div class="alert alert-info">
+							<i class="bi bi-info-circle"></i> 
+							Tu incidencia está siendo procesada por el equipo de mantenimiento.
+						</div>
+				}
+
+				@* Botón de comentarios (todos pueden comentar) *@
+				<a asp-controller="Comentario"
+				   asp-action="Create"
+				   asp-route-idIncidencia="@Model.Id"
+				   class="btn" style="background-color: #47a478; color:white">
+					@* <i class="bi bi-chat-left-text"></i>  *@
+					Agregar comentario
+				</a>
+			</div>
+
+		</div>
+	</div>
 </div>

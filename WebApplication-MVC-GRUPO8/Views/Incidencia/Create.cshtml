@@ -1,118 +1,120 @@
-﻿@model WebApplication_MVC_GRUPO8.Models.Incidencia
+﻿@model WebApplication_MVC_GRUPO8.ViewModels.ReporteIncidenciaViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Reportar Incidencia";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                       Reportar Nueva Incidencia
+                    </h4>
+                </div>
+                <div class="card-body">
 
-<h4>Incidencia</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="titulo" class="control-label"></label>
-                <input asp-for="titulo" class="form-control" />
-                <span asp-validation-for="titulo" class="text-danger"></span>
+                    @* Mensajes de error general*@
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    @* Formulario con enctype para archivos *@
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label asp-for="Titulo" class="form-label">
+                               Título de la Incidencia
+                            </label>
+                            <input asp-for="Titulo" class="form-control" placeholder="Ej: Fuga de agua en el baño del 2do piso" />
+                            <span asp-validation-for="Titulo" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Máximo 200 caracteres. Sea específico y claro.
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label">
+                               Descripción Detallada
+                            </label>
+                            <textarea asp-for="Descripcion" 
+                                      class="form-control" 
+                                      rows="5" 
+                                      placeholder="Describa el problema con el mayor detalle posible..."></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Máximo 1000 caracteres. Incluya ubicación, momento en que ocurrió, etc.
+                            </small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdCategoria" class="form-label">
+                                Categoría del Problema
+                            </label>
+                            <select asp-for="IdCategoria" 
+                                    class="form-select" 
+                                    asp-items="ViewBag.Categorias">
+                                <option value="">-- Seleccione una categoría --</option>
+                            </select>
+                            <span asp-validation-for="IdCategoria" class="text-danger"></span>
+                        </div>
+
+                        @* Imagen *@
+                        <div class="mb-3">
+                            <label asp-for="ImagenIncidencia" class="form-label">
+                                 Foto del Problema (Obligatorio)
+                            </label>
+                            <input asp-for="ImagenIncidencia" 
+                                   type="file" 
+                                   class="form-control" 
+                                   accept=".jpg,.jpeg,.png,.gif"
+                                   onchange="previewImage(event)" />
+                            <span asp-validation-for="ImagenIncidencia" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB
+                            </small>
+
+                            @* Vista previa de la imagen *@
+                            <div id="preview-container" class="mt-3" style="display: none;">
+                                <p class="text-muted">Vista previa:</p>
+                                <img id="preview-image" src="#" alt="Vista previa" class="img-thumbnail" style="max-width: 400px;" />
+                            </div>
+                        </div>
+
+                        @* Botones *@
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-action="Index" class="btn btn-danger">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Reportar Incidencia
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="descripcion" class="control-label"></label>
-                <input asp-for="descripcion" class="form-control" />
-                <span asp-validation-for="descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="imagenIncidencia" class="control-label"></label>
-                <input asp-for="imagenIncidencia" class="form-control" />
-                <span asp-validation-for="imagenIncidencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fechaReporte" class="control-label"></label>
-                <input asp-for="fechaReporte" class="form-control" />
-                <span asp-validation-for="fechaReporte" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idUsuario" class="control-label"></label>
-                <input asp-for="idUsuario" class="form-control" />
-                <span asp-validation-for="idUsuario" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idEncargado" class="control-label"></label>
-                <input asp-for="idEncargado" class="form-control" />
-                <span asp-validation-for="idEncargado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="idTecnico" class="control-label"></label>
-                <input asp-for="idTecnico" class="form-control" />
-                <span asp-validation-for="idTecnico" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fechaAsignacion" class="control-label"></label>
-                <input asp-for="fechaAsignacion" class="form-control" />
-                <span asp-validation-for="fechaAsignacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="sla" class="control-label"></label>
-                <input asp-for="sla" class="form-control" />
-                <span asp-validation-for="sla" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="justificacionDescarte" class="control-label"></label>
-                <input asp-for="justificacionDescarte" class="form-control" />
-                <span asp-validation-for="justificacionDescarte" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fechaInicioReparacion" class="control-label"></label>
-                <input asp-for="fechaInicioReparacion" class="form-control" />
-                <span asp-validation-for="fechaInicioReparacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fechaFinReparacion" class="control-label"></label>
-                <input asp-for="fechaFinReparacion" class="form-control" />
-                <span asp-validation-for="fechaFinReparacion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="costoTotal" class="control-label"></label>
-                <input asp-for="costoTotal" class="form-control" />
-                <span asp-validation-for="costoTotal" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="descripcionGasto" class="control-label"></label>
-                <input asp-for="descripcionGasto" class="form-control" />
-                <span asp-validation-for="descripcionGasto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="imagenFinalIncidencia" class="control-label"></label>
-                <input asp-for="imagenFinalIncidencia" class="form-control" />
-                <span asp-validation-for="imagenFinalIncidencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="prioridad" class="control-label"></label>
-                <select asp-for="prioridad" class="form-control"></select>
-                <span asp-validation-for="prioridad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="estadoIncidencia" class="control-label"></label>
-                <select asp-for="estadoIncidencia" class="form-control"></select>
-                <span asp-validation-for="estadoIncidencia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="complejidad" class="control-label"></label>
-                <select asp-for="complejidad" class="form-control"></select>
-                <span asp-validation-for="complejidad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+        <script>
+            // Vista previa de la imagen antes de subir
+            function previewImage(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('preview-image').src = e.target.result;
+                        document.getElementById('preview-container').style.display = 'block';
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('preview-container').style.display = 'none';
+                }
+            }
+        </script>
 }

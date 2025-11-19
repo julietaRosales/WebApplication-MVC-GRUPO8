@@ -1,137 +1,154 @@
 ﻿@model IEnumerable<WebApplication_MVC_GRUPO8.Models.Incidencia>
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Incidencias";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+	<div class="row">
+		<div class="col-md-12">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.titulo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.descripcion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.imagenIncidencia)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.fechaReporte)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.idUsuario)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.idEncargado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.idTecnico)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.fechaAsignacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.sla)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.justificacionDescarte)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.fechaInicioReparacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.fechaFinReparacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.costoTotal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.descripcionGasto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.imagenFinalIncidencia)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.prioridad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.estadoIncidencia)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.complejidad)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.imagenIncidencia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.fechaReporte)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.idUsuario)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.idEncargado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.idTecnico)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.fechaAsignacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.sla)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.justificacionDescarte)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.fechaInicioReparacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.fechaFinReparacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.costoTotal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.descripcionGasto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.imagenFinalIncidencia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.prioridad)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.estadoIncidencia)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.complejidad)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+			@* Título y botón de crear *@
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h1>
+				   Incidencias
+				</h1>
+				<a asp-action="Create" class="btn btn-primary">
+					<i class="bi bi-plus-circle"></i> Reportar Incidencia
+				</a>
+			</div>
+
+			@* Mensaje de éxito (si existe) *@
+			@if (TempData["Success"] != null)
+			{
+						<div class="alert alert-success alert-dismissible fade show" role="alert">
+							<i class="bi bi-check-circle"></i> @TempData["Success"]
+							<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+						</div>
+			}
+
+			@* Tabla de incidencias *@
+			<div class="card shadow">
+				<div class="card-body">
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead class="table-dark">
+								<tr>
+									<th>ID</th>
+									<th>Título</th>
+									<th>Estado</th>
+									<th>Prioridad</th>
+									<th>Reportado por</th>
+									<th>Fecha</th>
+									<th class="text-center">Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var item in Model)
+								{
+								<tr>
+									<td>
+										<strong>#@item.id</strong>
+									</td>
+								<td>
+									<div class="d-flex align-items-center">
+										@if (!string.IsNullOrEmpty(item.imagenIncidencia))
+										{
+											<img src="@item.imagenIncidencia" 
+												alt="Thumbnail" 
+												 class="rounded me-2" 
+												style="width: 50px; height: 50px; object-fit: cover;" />
+										}
+										<div>
+											<strong>@item.titulo</strong>
+												<br />
+											<small class="text-muted">
+											@(item.descripcion.Length > 50 ?
+												item.descripcion.Substring(0, 50) + "..." :
+												item.descripcion)
+											</small>
+										</div>
+									</div>
+								</td>
+								<td>
+								@switch (item.estadoIncidencia)
+									{
+									case EstadoIncidencia.reportado:
+													<span class="badge rounded-pill bg-info text-dark">Reportado</span>
+										break;
+									case EstadoIncidencia.asignado:
+													<span class="badge rounded-pill bg-warning">Asignado</span>
+										break;
+									case EstadoIncidencia.enReparacion:
+													<span class="badge rounded-pill bg-primary">En Reparación</span>
+										break;
+									case EstadoIncidencia.descartado:
+													<span class="badge rounded-pill bg-danger">Descartado</span>
+										break;
+										default:
+													<span class="badge rounded-pill bg-light text-dark">@item.estadoIncidencia</span>
+										break;
+									}
+								</td>
+								<td>
+									@if (item.prioridad.HasValue)
+									{
+										switch (item.prioridad.Value)
+											{
+												case Prioridad.alta:
+												<span class="badge bg-danger">Alta</span>
+												break;
+												case Prioridad.media:
+												<span class="badge bg-warning text-dark">Media</span>
+												break;
+												case Prioridad.baja:
+												<span class="badge bg-success">Baja</span>
+												break;
+											}
+											}
+											else
+											{
+												<span class="text-muted">Sin asignar</span>
+											}
+								</td>
+								<td>
+									@if (item.Usuario != null)
+										{
+											<span>@item.Usuario.nombre @item.Usuario.apellido</span>
+										}
+										else
+										{
+											<span class="text-muted">Usuario desconocido</span>
+										}
+								</td>
+								<td>
+									@item.fechaReporte.ToString("dd/MM/yyyy HH:mm")
+								</td>
+								<td class="text-center">
+									<div class="btn-group" role="group">
+										<a asp-action="Details" asp-route-id="@item.id" 
+											class="btn btn-sm btn-info" 
+											title="Ver Detalles">
+											<i class="bi bi-eye"></i>
+										</a>
+										@* TODO: Agregar botones según el estado y rol del usuario *@
+									</div>
+								</td>
+							</tr>
+								}
+							</tbody>
+						</table>
+
+						@if (!Model.Any())
+						{
+							<div class="alert alert-info text-center mt-3">
+								<i class="bi bi-info-circle"></i> No hay incidencias registradas.
+								<br />
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
