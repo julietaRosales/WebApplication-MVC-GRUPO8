@@ -4,56 +4,83 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                       Crear nuevo usuario
+                    </h4>
+                </div>
+                <div class="card-body">
 
-<h4>User</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="nombre" class="control-label"></label>
-                <input asp-for="nombre" class="form-control" />
-                <span asp-validation-for="nombre" class="text-danger"></span>
+                     @* Mensajes de error general *@
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    @* Formulario *@
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label asp-for="nombre" class="form-label">
+                                 Nombre
+                            </label>
+                            <input asp-for="nombre" class="form-control" placeholder="Escribir nombre del usuario" />
+                            <span asp-validation-for="nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="apellido" class="form-label">
+                                 Apellido
+                            </label>
+                            <input asp-for="apellido" class="form-control" placeholder="Escribir apellido del usuario" />
+                            <span asp-validation-for="apellido" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="email" class="form-label">
+                             Email
+                             </label>
+                            <input asp-for="email" class="form-control" placeholder="Escribir email" />
+                            <span asp-validation-for="email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="password" class="form-label">
+                             Contraseña
+                             </label>
+                            <input asp-for="password" class="form-control" placeholder="Escribir contraseña" />
+                            <span asp-validation-for="password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="rol" class="form-label">
+                                Rol del usuario
+                            </label>
+                            <select asp-for="rol" 
+                                    class="form-select" 
+                                    asp-items="Html.GetEnumSelectList<RolUsuario>()">
+                                <option value="">-- Seleccione rol de usuario --</option>
+                            </select>
+                            <span asp-validation-for="rol" class="text-danger"></span>
+                        </div>
+
+                        @* Botones *@
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-action="Index" class="btn btn-danger">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                 Crear usuario
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="apellido" class="control-label"></label>
-                <input asp-for="apellido" class="form-control" />
-                <span asp-validation-for="apellido" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="email" class="control-label"></label>
-                <input asp-for="email" class="form-control" />
-                <span asp-validation-for="email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="password" class="control-label"></label>
-                <input asp-for="password" class="form-control" />
-                <span asp-validation-for="password" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="userActivo" /> @Html.DisplayNameFor(model => model.userActivo)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="rol" class="control-label"></label>
-                <select asp-for="rol" class="form-control" asp-items="Html.GetEnumSelectList<RolUsuario>()">
-                    <option selected="selected" value="">Please select</option>
-                </select>
-                <span asp-validation-for="rol" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
