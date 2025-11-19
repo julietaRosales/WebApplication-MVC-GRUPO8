@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApplication_MVC_GRUPO8.Context;
 using WebApplication_MVC_GRUPO8.Models;
+using WebApplication_MVC_GRUPO8.ViewModels;
 
 namespace WebApplication_MVC_GRUPO8.Controllers
 {
@@ -44,9 +45,14 @@ namespace WebApplication_MVC_GRUPO8.Controllers
         }
 
         // GET: Comentario/Create
-        public IActionResult Create()
+        public IActionResult Create(int idIncidencia)
         {
-            return View();
+            var vm = new ComentarioViewModel
+            {
+                idIncidencia = idIncidencia  // viene desde el detalle de incidencia
+            };
+
+            return View(vm);
         }
 
         // POST: Comentario/Create
@@ -54,15 +60,30 @@ namespace WebApplication_MVC_GRUPO8.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,texto,idUsuario,fechaComentario,idIncidencia")] Comentario comentario)
+        public async Task<IActionResult> Create(ComentarioViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(comentario);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(model);
             }
-            return View(comentario);
+
+            var comentario = new Comentario
+            {
+                // El ID lo genera EF
+                texto = model.texto,
+                idUsuario = 1,                   // reemplazar cuando tenga el login
+                fechaComentario = DateTime.Now,  // automatico
+                idIncidencia = model.idIncidencia == 0
+                ? 1 // quitar cuando tenga la incidencia real
+                : model.idIncidencia
+            };
+
+            _context.Comentarios.Add(comentario);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Comentario agregado correctamente";
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Comentario/Edit/5

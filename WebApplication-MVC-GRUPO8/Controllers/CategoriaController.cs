@@ -58,6 +58,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
         {
             if (ModelState.IsValid)
             {
+                categoria.categoriaActivo = true;
                 _context.Add(categoria);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
