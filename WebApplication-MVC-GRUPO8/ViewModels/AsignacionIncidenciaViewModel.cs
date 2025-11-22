@@ -9,16 +9,19 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
 
         // Datos de la incidencia (para mostrar en la vista)
         [Display(Name = "Título")]
-        public string Titulo { get; set; }
+        public string? Titulo { get; set; }
 
         [Display(Name = "Descripción")]
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
 
         [Display(Name = "Imagen")]
-        public string ImagenIncidencia { get; set; }
+        public string? ImagenIncidencia { get; set; }
+
+        [Display(Name = "Categoría")]
+        public string? NombreCategoria { get; set; }
 
         [Display(Name = "Reportado por")]
-        public string NombreUsuario { get; set; }
+        public string? NombreUsuario { get; set; }
 
         [Display(Name = "Fecha de Reporte")]
         public DateTime FechaReporte { get; set; }
@@ -30,16 +33,16 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
 
         [Required(ErrorMessage = "Debe seleccionar una prioridad")]
         [Display(Name = "Prioridad")]
-        public Prioridad Prioridad { get; set; }
+        public Prioridad? Prioridad { get; set; }
 
         [Required(ErrorMessage = "Debe seleccionar la complejidad")]
         [Display(Name = "Complejidad")]
-        public Complejidad Complejidad { get; set; }
+        public Complejidad? Complejidad { get; set; }
 
-        [MaxLength(500, ErrorMessage = "Las observaciones no pueden exceder 500 caracteres")]
-        [Display(Name = "Observaciones")]
+        [MaxLength(500, ErrorMessage = "El comentario no puede exceder 500 caracteres")]
+        [Display(Name = "Agregar comentario")]
         [DataType(DataType.MultilineText)]
-        public string Observaciones { get; set; }
+        public string ComentarioNuevo { get; set; }
 
         // Nota: Estos campos se asignarán automáticamente en el Controller
         public DateTime FechaAsignacion { get; set; } = DateTime.Now;
