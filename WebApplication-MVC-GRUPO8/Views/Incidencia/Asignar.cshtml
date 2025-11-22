@@ -1,0 +1,98 @@
+﻿@model WebApplication_MVC_GRUPO8.ViewModels.AsignacionIncidenciaViewModel
+
+@{
+    ViewData["Title"] = "Asignar";
+}
+
+<h3>Asignar incidencia #@Model.IdIncidencia</h3>
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Asignar" method="post">
+    <div class="container mt-4">
+
+        <div class="card mb-3 shadow" style="border-radius: 20px; overflow: hidden;">
+            <div class="row g-0">
+
+                 @* Imagen izquierda *@
+                <div class="col-md-4" style="max-height: 250px; overflow: hidden;">
+                    @if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
+                    {
+                        <img src="@Model.ImagenIncidencia"
+                             alt="@Model.Titulo"
+                             class="img-fluid h-100 w-100 object-fit-cover" />
+                    }
+                </div>
+
+             @* Contenido derecho  *@
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <p class="card-text text-muted">
+                            <i class="bi bi-bookmark me-2"></i>@Model.NombreCategoria
+                        </p>
+
+                        <h3 class="card-title">@Model.Titulo</h3>
+
+                        <p class="card-text">
+                            @Model.Descripcion
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <input type="hidden" asp-for="IdIncidencia" />
+
+    <div class="mb-3">
+        <label asp-for="IdTecnico" class="form-label">Usuario a asignar</label>
+        <select asp-for="IdTecnico"
+                class="form-select"
+                asp-items="ViewBag.Tecnicos">
+            <option value="">-- Seleccione usuario --</option>
+        </select>
+        <span asp-validation-for="IdTecnico" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+    <label asp-for="Prioridad" class="form-label">Prioridad</label>
+    <select asp-for="Prioridad"
+            class="form-select"
+            asp-items="ViewBag.Prioridades">
+        <option value="">-- Seleccione prioridad --</option>
+    </select>
+        <span asp-validation-for="Prioridad" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Complejidad" class="form-label">Complejidad</label>
+        <select asp-for="Complejidad"
+                class="form-select"
+                asp-items="ViewBag.Complejidades">
+            <option value="">-- Seleccione complejidad --</option>
+            <span asp-validation-for="Complejidad" class="text-danger"></span>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ComentarioNuevo" class="form-label"></label>
+        <textarea asp-for="ComentarioNuevo" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="ComentarioNuevo" class="text-danger"></span>
+    </div>
+    @* Botones *@
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+        <a asp-action="Details" asp-route-id="@Model.IdIncidencia" class="btn btn-danger">
+            <i class="bi bi-arrow-left"></i> Cancelar
+        </a>
+        <button type="submit" class="btn btn-primary">
+            Asignar
+        </button>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
