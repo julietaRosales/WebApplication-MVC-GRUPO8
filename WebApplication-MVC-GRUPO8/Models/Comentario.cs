@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication_MVC_GRUPO8.Models
 {
@@ -11,5 +12,8 @@ namespace WebApplication_MVC_GRUPO8.Models
         [Display(Name = "Fecha del comentario")]
         public DateTime fechaComentario { get; set; }
         public int idIncidencia { get; set; }
+
+        [ForeignKey("idIncidencia")]
+        public virtual Incidencia Incidencia { get; set; }
     }
 }
