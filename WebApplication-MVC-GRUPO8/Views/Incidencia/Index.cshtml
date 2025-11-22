@@ -37,9 +37,9 @@
 									<th>ID</th>
 									<th>Título</th>
 									<th>Estado</th>
-									<th>Prioridad</th>
 									<th>Reportado por</th>
 									<th>Fecha</th>
+									<th>Prioridad</th>
 									<th class="text-center">Acciones</th>
 								</tr>
 							</thead>
@@ -90,27 +90,7 @@
 										break;
 									}
 								</td>
-								<td>
-									@if (item.prioridad.HasValue)
-									{
-										switch (item.prioridad.Value)
-											{
-												case Prioridad.alta:
-												<span class="badge bg-danger">Alta</span>
-												break;
-												case Prioridad.media:
-												<span class="badge bg-warning text-dark">Media</span>
-												break;
-												case Prioridad.baja:
-												<span class="badge bg-success">Baja</span>
-												break;
-											}
-											}
-											else
-											{
-												<span class="text-muted">Sin asignar</span>
-											}
-								</td>
+								
 								<td>
 									@if (item.Usuario != null)
 										{
@@ -124,6 +104,27 @@
 								<td>
 									@item.fechaReporte.ToString("dd/MM/yyyy HH:mm")
 								</td>
+										<td>
+											@if (item.prioridad.HasValue)
+											{
+												switch (item.prioridad.Value)
+												{
+													case Prioridad.alta:
+														<span class="badge bg-danger" style="width:50px">Alta</span>
+														break;
+													case Prioridad.media:
+														<span class="badge bg-warning text-dark" style="width:50px">Media</span>
+														break;
+													case Prioridad.baja:
+														<span class="badge bg-success" style="width:50px">Baja</span>
+														break;
+												}
+											}
+											else
+											{
+												<span class="text-muted">Sin asignar</span>
+											}
+										</td>
 								<td class="text-center">
 									<div class="btn-group" role="group">
 										<a asp-action="Details" asp-route-id="@item.id" 
