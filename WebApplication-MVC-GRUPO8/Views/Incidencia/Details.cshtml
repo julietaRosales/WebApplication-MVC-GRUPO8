@@ -12,168 +12,184 @@
 			</a>
 
 			@* Header con título y estado *@
-			<div class="d-flex  mb-4">
-				<div>
-					@switch (Model.EstadoIncidencia)
-					{
-						case EstadoIncidencia.reportado:
-																			<span class="badge rounded-pill bg-info text-dark fs-6 ">Reportado</span>
-							break;
-						case EstadoIncidencia.asignado:
-																			<span class="badge rounded-pill bg-warning fs-6">Asignado</span>
-							break;
-						case EstadoIncidencia.enReparacion:
-																	<span class="badge rounded-pill bg-primary fs-6">En reparacion</span>
-							break;
-						case EstadoIncidencia.descartado:
-																	<span class="badge rounded-pill bg-danger fs-6">Descartado</span>
-							break;
-					}
-				</div>
-			</div>
+			@* <div class="d-flex  mb-4"> *@
+			@* 	<div> *@
+			@* 		@switch (Model.EstadoIncidencia) *@
+			@* 		{ *@
+			@* 			case EstadoIncidencia.reportado: *@
+			@* 																<span class="badge rounded-pill bg-info text-dark fs-6 ">Reportado</span> *@
+			@* 				break; *@
+			@* 			case EstadoIncidencia.asignado: *@
+			@* 																<span class="badge rounded-pill bg-warning fs-6">Asignado</span> *@
+			@* 				break; *@
+			@* 			case EstadoIncidencia.enReparacion: *@
+			@* 														<span class="badge rounded-pill bg-primary fs-6">En reparacion</span> *@
+			@* 				break; *@
+			@* 			case EstadoIncidencia.descartado: *@
+			@* 														<span class="badge rounded-pill bg-danger fs-6">Descartado</span> *@
+			@* 				break; *@
+			@* 		} *@
+			@* 	</div> *@
+			@* </div> *@
 
 		</div>
 	</div>
 
 	<div>
 		<div>
-			@* @* Imagen principal *@
-	<div class="card mb-3" style="border-radius: 30px;">
-		  <div style=" overflow: hidden; display:flex; justify-content:center; height:350px; width:100%">
-						@if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
-						{ 
-							<img src="@Model.ImagenIncidencia" 
-							alt="@Model.Titulo" 
-							class="img-fluid" /> 
-						} 
-		 </div>
-  <div class="card-body">
-	<p class="card-text"> <i class="bi bi-bookmark" style="margin-right:10px"></i>@Model.NombreCategoria</p>
-	<h3 class="card-title">@Model.Titulo</h3>
-	<p class="card-text">@Model.Descripcion</p>
+			@* @* CARD principal *@
+			<div class="container mt-4 p-0">
 
-					@if (Model.Prioridad.HasValue)
-					{
-												<dt class="col-sm-5">Prioridad:</dt>
-												<dd class="col-sm-7">
-							@switch (Model.Prioridad.Value)
+				<div class="card mb-3 shadow" style="border-radius: 20px; overflow: hidden;">
+					<div class="row g-0">
+
+						<!-- Imagen izquierda -->
+						<div class="col-md-4" style="max-height: 250px; overflow: hidden;">
+							@if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
 							{
-								case Prioridad.alta:
-																									<span class="badge bg-danger">Alta</span>
-									break;
-								case Prioridad.media:
-																									<span class="badge bg-warning text-dark">Media</span>
-									break;
-								case Prioridad.baja:
-																									<span class="badge bg-success">Baja</span>
-									break;
+								<img src="@Model.ImagenIncidencia"
+									 alt="@Model.Titulo"
+									 class="img-fluid h-100 w-100 object-fit-cover" />
 							}
-												</dd>
-					}
+						</div>
 
-					@if (Model.Complejidad.HasValue)
-					{
-												<dt class="col-sm-5">Complejidad:</dt>
-												<dd class="col-sm-7">
-													<span class="badge bg-secondary">@Model.Complejidad.Value</span>
-												</dd>
-					}
+						<!-- Contenido derecho -->
+						<div class="col-md-8">
+							<div class="card-body">
+									<div class="d-flex justify-content-between">
+									<p class="card-text text-muted">
+										<i class="bi bi-bookmark me-2"></i>@Model.NombreCategoria
+									</p>
+									<div>
+										@switch (Model.EstadoIncidencia)
+										{
+											case EstadoIncidencia.reportado:
+												<span class="badge rounded-pill bg-info text-dark fs-6 ">Reportado</span>
+												break;
+											case EstadoIncidencia.asignado:
+												<span class="badge rounded-pill bg-warning fs-6">Asignado</span>
+												break;
+											case EstadoIncidencia.enReparacion:
+												<span class="badge rounded-pill bg-primary fs-6">En reparacion</span>
+												break;
+											case EstadoIncidencia.descartado:
+												<span class="badge rounded-pill bg-danger fs-6">Descartado</span>
+												break;
+										}
+										</div>
+									</div>
+								
 
-				<div class="card-body">
-					<dl class="row mb-0">
+								<h3 class="card-title">@Model.Titulo</h3>
+
+								<p class="card-text">
+									@Model.Descripcion
+								</p>
+
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+			</div>
+  </div>
+
+
+		<div class="d-flex justify-content-between align-items-center ">
+		@* DETALLEs *@
+<div class="col-4">
+		<div class="card shadow-sm mb-4">
+			<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-file-text"></i> Detalles</h5>
+			</div>
+			<div class="card-body">
+				<dl class="row mb-0">
+	
 						<dt class="col-sm-5">Reportado por:</dt>
 						<dd class="col-sm-7">@Model.NombreUsuarioReporta</dd>
 
-						<dt class="col-sm-5">Fecha Reporte:</dt>
-						<dd class="col-sm-7">@Model.FechaReporte.ToString("dd/MM/yyyy HH:mm")</dd>
-					</dl>
-					</div>
-  </div>
-  @* COMENTARIO *@
-				@{
-					var comentarios = ViewBag.Comentarios as List<WebApplication_MVC_GRUPO8.ViewModels.ComentarioListaVM>;
-				}
+				<dt class="col-sm-5">Fecha Reporte:</dt>
+				<dd class="col-sm-7">@Model.FechaReporte.ToString("dd/MM/yyyy HH:mm")</dd>
 
-				@if (comentarios != null && comentarios.Any())
+				@if (Model.Prioridad.HasValue)
 				{
-					<h4 style="margin-left: 20px;">Comentarios:</h4>
-
-				<ol class="list-group list-group-numbered">
-						@foreach (var c in comentarios)
+					<dt class="col-sm-5">Prioridad:</dt>
+					<dd class="col-sm-7">
+						@switch (Model.Prioridad.Value)
 						{
-				  <li class="list-group-item d-flex justify-content-between align-items-start">
-					<div class="ms-2 me-auto">
-						  <div class="fw-bold">
-							<strong>@c.NombreUsuario @c.ApellidoUsuario</strong>  				
-					</div>
-								@c.Texto
-					</div>
-
-							<small class="text-muted">(@c.FechaComentario.ToString("dd/MM/yyyy HH:mm"))</small>
-				  </li>
+							case Prioridad.alta:
+								<span class="badge bg-danger">ALTA</span>
+								break;
+							case Prioridad.media:
+								<span class="badge bg-warning text-dark">MEDIA</span>
+								break;
+							case Prioridad.baja:
+								<span class="badge bg-success">BAJA</span>
+								break;
 						}
-				</ol>
+					</dd>
 				}
-				else
+				@if (Model.Complejidad.HasValue)
 				{
-					<p class="text-muted">No hay comentarios para esta incidencia.</p>
+					<dt class="col-sm-5">Complejidad:</dt>
+					<dd class="col-sm-7">
+						@switch (Model.Complejidad.Value)
+						{
+							case Complejidad.dificil:
+								<span class="badge bg-danger">DIFICIL</span>
+								break;
+							case Complejidad.intermedio:
+								<span class="badge bg-warning text-dark">INTERMEDIO</span>
+								break;
+							case Complejidad.facil:
+								<span class="badge bg-success">FACIL</span>
+								break;
+						}
+					</dd>
 				}
+			</dl>
 			</div>
-			@* Card: Imagen final (si existe) *@
-			@if (!string.IsNullOrEmpty(Model.ImagenFinalIncidencia))
-			{
-								<div class="card shadow-sm mb-4">
-									<div class="card-header bg-success text-white">
-										<h5 class="mb-0"><i class="bi bi-check-circle"></i> Imagen Final</h5>
-									</div>
-									<div class="card-body p-0">
-										<img src="@Model.ImagenFinalIncidencia" 
-											 alt="Resultado final" 
-											 class="img-fluid w-100"
-											 style="max-height: 400px; object-fit: contain; background-color: #f8f9fa;">
-									</div>
-								</div>
-			}
-
 		</div>
-
-		<div class="col-lg-4">
-			@* Card: Personal asignado *@
+		</div>
+		@* Personal asignado *@
+	<div class="col-4">
 			@if (!string.IsNullOrEmpty(Model.NombreEncargado) || !string.IsNullOrEmpty(Model.NombreTecnico))
-			@* { *@
-			@* 					<div class="card shadow-sm mb-4"> *@
-			@* 						<div class="card-header"> *@
-			@* 							<h5 class="mb-0"><i class="bi bi-people"></i> Personal Asignado</h5> *@
-			@* 						</div> *@
-			@* 						<div class="card-body"> *@
-			@* 							<dl class="row mb-0"> *@
-			@* 				@if (!string.IsNullOrEmpty(Model.NombreEncargado) && Model.NombreEncargado != "Sin asignar") *@
-			@* 				{ *@
-			@* 													<dt class="col-sm-5">Encargado:</dt> *@
-			@* 													<dd class="col-sm-7">@Model.NombreEncargado</dd> *@
-			@* 				} *@
+			 { 
+			 					<div class="card shadow-sm mb-4"> 
+			 						<div class="card-header"> 
+			 							<h5 class="mb-0"><i class="bi bi-people"></i> Personal Asignado</h5> 
+			 						</div> 
+			 						<div class="card-body"> 
+			 							<dl class="row mb-0"> 
+			 				@if (!string.IsNullOrEmpty(Model.NombreEncargado) && Model.NombreEncargado != "Sin asignar") 
+			 				{ 
+			 													<dt class="col-sm-5">Encargado:</dt> 
+			 													<dd class="col-sm-7">@Model.NombreEncargado</dd> 
+			 				} 
 
-			@* 				@if (!string.IsNullOrEmpty(Model.NombreTecnico) && Model.NombreTecnico != "Sin asignar") *@
-			@* 				{ *@
-			@* 													<dt class="col-sm-5">Técnico:</dt> *@
-			@* 													<dd class="col-sm-7">@Model.NombreTecnico</dd> *@
-			@* 				} *@
+			 				@if (!string.IsNullOrEmpty(Model.NombreTecnico) && Model.NombreTecnico != "Sin asignar") 
+			 				{ 
+			 													<dt class="col-sm-5">Técnico:</dt> 
+			 													<dd class="col-sm-7">@Model.NombreTecnico</dd> 
+			 				} 
+						 				@if (Model.FechaAsignacion.HasValue) 
+			 				{ 
+			 													<dt class="col-sm-5">Fecha Asignación:</dt> 
+			 													<dd class="col-sm-7">@Model.FechaAsignacion.Value.ToString("dd/MM/yyyy HH:mm")</dd> 
+			 				} 
 
-			@* 				@if (Model.FechaAsignacion.HasValue) *@
-			@* 				{ *@
-			@* 													<dt class="col-sm-5">Fecha Asignación:</dt> *@
-			@* 													<dd class="col-sm-7">@Model.FechaAsignacion.Value.ToString("dd/MM/yyyy HH:mm")</dd> *@
-			@* 				} *@
-
-			@* 				@if (Model.Sla.HasValue) *@
-			@* 				{ *@
-			@* 													<dt class="col-sm-5">SLA (horas):</dt> *@
-			@* 													<dd class="col-sm-7">@Model.Sla.Value</dd> *@
-			@* 				} *@
-			@* 							</dl> *@
-			@* 						</div> *@
-			@* 					</div> *@
-			@* } *@
+			 				@if (Model.Sla.HasValue) 
+			 				{ 
+			 													<dt class="col-sm-5">SLA (horas):</dt> 
+																<dd class="col-sm-7">@Model.Sla.Value.ToString("0")</dd> 
+							} 
+			 							</dl> 
+								</div> 
+			 					</div> 
+			 } 
+			 </div>
+</div>
 
 			@* Card: Reparación *@
 			@if (Model.FechaInicioReparacion.HasValue || Model.CostoTotal.HasValue)
@@ -209,8 +225,24 @@
 																<dt class="col-sm-12">Descripción del Gasto:</dt>
 																<dd class="col-sm-12">@Model.DescripcionGasto</dd>
 							}
+						@* Card: Imagen final (si existe) *@
+					
 										</dl>
 									</div>
+				@if (!string.IsNullOrEmpty(Model.ImagenFinalIncidencia))
+				{
+					<div class="card shadow-sm mb-4">
+						<div class="card-header bg-success text-white">
+							<h5 class="mb-0"><i class="bi bi-check-circle"></i> Imagen Final</h5>
+						</div>
+						<div class="card-body p-0">
+							<img src="@Model.ImagenFinalIncidencia"
+								 alt="Resultado final"
+								 class="img-fluid w-100"
+								 style="max-height: 400px; object-fit: contain; background-color: #f8f9fa;">
+						</div>
+					</div>
+				}
 								</div>
 			}
 
@@ -226,7 +258,51 @@
 									</div>
 								</div>
 			}
+		@* COMENTARIO *@
+		@{
+			var comentarios = ViewBag.Comentarios as List<WebApplication_MVC_GRUPO8.ViewModels.ComentarioListaVM>;
+		}
+		<div class="card shadow-sm mb-4">
+			<div class="card-header">
+				<div class="d-flex justify-content-between align-items-start">
+				<h5 class="mb-0 "><i class="bi bi-chat-square-text"></i> Comentarios</h5>
+				@* Botón de comentarios (todos pueden comentar) *@
+				<a asp-controller="Comentario"
+				   asp-action="Create"
+				   asp-route-idIncidencia="@Model.Id"
+				   class="btn" style="background-color: #47a478; color:white">
+					<i class="bi bi-plus-circle"></i>
+					Agregar
+				</a>
+				</div>
+			</div>
+			@if (comentarios != null && comentarios.Any())
+			{
 
+				<ol class="list-group list-group-numbered">
+					@foreach (var c in comentarios)
+					{
+						<li class="list-group-item d-flex justify-content-between align-items-start" style="border-radius:0">
+							<div class="ms-2 me-auto">
+								<div class="fw-bold">
+									<strong>@c.NombreUsuario @c.ApellidoUsuario</strong>
+								</div>
+								@c.Texto
+							</div>
+
+							<small class="text-muted">(@c.FechaComentario.ToString("dd/MM/yyyy HH:mm"))</small>
+						</li>
+					}
+				</ol>
+			}
+			else
+			{
+				<p class="text-muted">No hay comentarios para esta incidencia.</p>
+			}
+		</div>
+	</div>
+
+</div>
 			@* Botones de acción (según el estado) *@
 				<div class="d-flex gap-2">
 				@{
@@ -276,7 +352,7 @@
 				{
 					@if (Model.EstadoIncidencia == EstadoIncidencia.reportado)
 					{
-								<a asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
+								<a  asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
 									<i class="bi bi-person-check"></i> 
 									@* Asignar Técnico *@
 								</a>
@@ -337,16 +413,4 @@
 						</div>
 				}
 
-				@* Botón de comentarios (todos pueden comentar) *@
-				<a asp-controller="Comentario"
-				   asp-action="Create"
-				   asp-route-idIncidencia="@Model.Id"
-				   class="btn" style="background-color: #47a478; color:white">
-					@* <i class="bi bi-chat-left-text"></i>  *@
-					Agregar comentario
-				</a>
 			</div>
-
-		</div>
-	</div>
-</div>
