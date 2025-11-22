@@ -211,6 +211,193 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             return View(viewModel);
         }
 
+        // GET: Incidencia/Asignar/x
+        public async Task<IActionResult> Asignar(int id)
+
+        {
+            CargarCategorias();
+            var incidencia = await _context.Incidencias
+                .Include(i => i.Usuario)
+                .Include(i => i.Categoria)
+                .FirstOrDefaultAsync(i => i.id == id);
+
+            if (incidencia == null)
+                return NotFound();
+
+            var vm = new AsignacionIncidenciaViewModel
+            {
+                IdIncidencia = incidencia.id,
+                Titulo = incidencia.titulo,
+                Descripcion = incidencia.descripcion,
+                ImagenIncidencia = incidencia.imagenIncidencia,
+                NombreUsuario = $"{incidencia.Usuario?.nombre} {incidencia.Usuario?.apellido}",
+                FechaReporte = incidencia.fechaReporte,
+                NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría",
+                IdTecnico = incidencia.idTecnico ?? 1,
+                Prioridad = incidencia.prioridad,
+                Complejidad = incidencia.complejidad
+            };
+
+             ViewBag.Tecnicos = new SelectList(
+                 _context.Usuarios
+                .Where(u => u.rol == RolUsuario.tecnico && u.userActivo)
+                .Select(u => new
+                {
+                    u.id,
+                    nombre = u.nombre + " " + u.apellido
+                })
+                .ToList(),
+                   "id",
+                   "nombre",
+                   incidencia.idTecnico
+                    );
+
+            ViewBag.Prioridades = Enum.GetValues(typeof(Prioridad))
+                          .Cast<Prioridad>()
+                          .Select(p => new SelectListItem
+                          {
+                              Value = ((int)p).ToString(),
+                              Text = p.ToString(),
+                              Selected = incidencia.prioridad == p
+                          })
+                          .ToList();
+
+            ViewBag.Complejidades = Enum.GetValues(typeof(Complejidad))
+                                .Cast<Complejidad>()
+                                .Select(c => new SelectListItem
+                                {
+                                    Value = ((int)c).ToString(),
+                                    Text = c.ToString(),
+                                    Selected = incidencia.complejidad == c
+                                })
+                                .ToList();
+
+
+            return View(vm);
+        }
+
+        private void CargarListasAsignacion(int? idTecnicoSeleccionado = null,Prioridad ? prioridadSeleccionada = null, Complejidad? complejidadSeleccionada = null)
+        {
+            ViewBag.Tecnicos = new SelectList(
+                _context.Usuarios
+                    .Where(u => u.rol == RolUsuario.tecnico && u.userActivo)
+                    .Select(u => new
+                    {
+                        u.id,
+                        nombre = u.nombre + " " + u.apellido
+                    })
+                    .ToList(),
+                "id",
+                "nombre",
+                idTecnicoSeleccionado
+            );
+
+            ViewBag.Prioridades = Enum.GetValues(typeof(Prioridad))
+                .Cast<Prioridad>()
+                .Select(p => new SelectListItem
+                {
+                    Value = ((int)p).ToString(),
+                    Text = p.ToString(),
+                    Selected = prioridadSeleccionada == p
+                })
+                .ToList();
+
+            ViewBag.Complejidades = Enum.GetValues(typeof(Complejidad))
+                .Cast<Complejidad>()
+                .Select(c => new SelectListItem
+                {
+                    Value = ((int)c).ToString(),
+                    Text = c.ToString(),
+                    Selected = complejidadSeleccionada == c
+                })
+                .ToList();
+        }
+
+        // POST Asignar incidencia
+        [HttpPost]
+        public async Task<IActionResult> Asignar(AsignacionIncidenciaViewModel model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                // Volver a cargar SELECTS
+                CargarListasAsignacion(model.IdTecnico,model.Prioridad, model.Complejidad);
+
+                // Volver a cargar datos de la incidencia para reconstruir la CARD
+                var incidencia = await _context.Incidencias
+                    .Include(i => i.Usuario)
+                    .Include(i => i.Categoria)
+                    .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+                if (incidencia != null)
+                {
+                    model.Titulo = incidencia.titulo;
+                    model.Descripcion = incidencia.descripcion;
+                    model.ImagenIncidencia = incidencia.imagenIncidencia;
+                    model.NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría";
+                    model.NombreUsuario = $"{incidencia.Usuario?.nombre} {incidencia.Usuario?.apellido}";
+                    model.FechaReporte = incidencia.fechaReporte;
+                }
+
+                return View(model);
+            }
+
+            var inc = await _context.Incidencias
+                .Include(i => i.Comentarios)
+                .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+            if (inc == null)
+                return NotFound();
+
+            inc.idTecnico = model.IdTecnico;
+            inc.prioridad = model.Prioridad;
+            inc.complejidad = model.Complejidad;
+            inc.idEncargado = 1; //TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
+            inc.fechaAsignacion = DateTime.Now;
+            inc.sla = CalcularSLA(model.Prioridad, model.Complejidad);
+            inc.estadoIncidencia = EstadoIncidencia.asignado;
+
+            if (!string.IsNullOrWhiteSpace(model.ComentarioNuevo))
+            {
+                inc.Comentarios.Add(new Comentario
+                {
+                    texto = model.ComentarioNuevo,
+                    fechaComentario = DateTime.Now,
+                    idUsuario = 1,//TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
+                    idIncidencia = inc.id
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = $"Incidencia - {inc.titulo} - asignada exitosamente";
+            return RedirectToAction("Index");
+        }
+
+        private decimal CalcularSLA(Prioridad? prioridad, Complejidad? complejidad)
+        {
+            if (!prioridad.HasValue || !complejidad.HasValue)
+                return 24m; // 24 horas por defecto
+
+            var matrizSLA = new Dictionary<(Prioridad, Complejidad), decimal>
+    {
+        { (Prioridad.baja, Complejidad.facil), 168m},      // 1 semana
+        { (Prioridad.baja, Complejidad.intermedio), 336m },     // 2 semanas
+        { (Prioridad.baja, Complejidad.dificil), 564m },     // 4 semanas
+        
+        { (Prioridad.media, Complejidad.facil), 48m },     // 2 día
+        { (Prioridad.media, Complejidad.intermedio), 92m },    // 4 dias
+        { (Prioridad.media, Complejidad.dificil), 504m  },     // 3 semanas
+
+        { (Prioridad.alta, Complejidad.facil), 24m },       // 1 dia
+        { (Prioridad.alta, Complejidad.intermedio), 120m },     // 5 dias
+        { (Prioridad.alta, Complejidad.dificil),  504m },      // 2 semana
+      
+    };
+
+            // Buscar el SLA correspondiente
+            var key = (prioridad.Value, complejidad.Value);
+            return matrizSLA.ContainsKey(key) ? matrizSLA[key] : 24m;
+        }
         private async Task<string> GuardarImagenTemporal(IFormFile archivo)
         {
             var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".gif" };
