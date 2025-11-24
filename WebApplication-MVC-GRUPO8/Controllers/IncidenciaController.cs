@@ -147,6 +147,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 .Include(i => i.Categoria)
                 .Include(i => i.Encargado)
                 .Include(i => i.Tecnico)
+                .Include(i => i.UsuarioDescarte)
                 .Include(i => i.Comentarios)
                 .FirstOrDefaultAsync(m => m.id == id);
 
@@ -206,15 +207,17 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                     $"{incidencia.Encargado.nombre} {incidencia.Encargado.apellido}" : "Sin asignar",
                 NombreTecnico = incidencia.Tecnico != null ?
                     $"{incidencia.Tecnico.nombre} {incidencia.Tecnico.apellido}" : "Sin asignar",
+                NombreUserDescarta = incidencia.UsuarioDescarte != null ?
+                incidencia.UsuarioDescarte.nombre + " " + incidencia.UsuarioDescarte.apellido : "Sin asignar",
                 NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría",
                 FechaAsignacion = incidencia.fechaAsignacion,
                 Sla = incidencia.sla,
-                JustificacionDescarte = incidencia.justificacionDescarte,
+                JustificacionDescarte = incidencia.justificacionDescarte ?? "-",
                 FechaInicioReparacion = incidencia.fechaInicioReparacion,
                 FechaFinReparacion = incidencia.fechaFinReparacion,
                 CostoTotal = incidencia.costoTotal,
-                DescripcionGasto = incidencia.descripcionGasto,
-                ImagenFinalIncidencia = incidencia.imagenFinalIncidencia,
+                DescripcionGasto = incidencia.descripcionGasto ?? "-",
+                ImagenFinalIncidencia = incidencia.imagenFinalIncidencia ?? "-",
                 Comentarios = incidencia.Comentarios.ToList()
             };
 
@@ -515,6 +518,74 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: Incidencia/Descartar/x
+        public async Task<IActionResult> Descartar(int id)
+
+        {
+            CargarCategorias();
+            var incidencia = await _context.Incidencias
+                .Include(i => i.Usuario)
+                .Include(i => i.Categoria)
+                .FirstOrDefaultAsync(i => i.id == id);
+
+            if (incidencia == null)
+                return NotFound();
+
+            var vm = new DescarteIncidencia
+            {
+                IdIncidencia = incidencia.id,
+                Titulo = incidencia.titulo,
+                Descripcion = incidencia.descripcion,
+                ImagenIncidencia = incidencia.imagenIncidencia,
+                NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría",
+                FechaReporte = incidencia.fechaReporte,
+            };
+
+            return View(vm);
+        }
+
+
+        // POST Descartar incidencia
+        [HttpPost]
+        public async Task<IActionResult> Descartar(DescarteIncidencia model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                // Volver a cargar datos de la incidencia para reconstruir la CARD
+                var incidencia = await _context.Incidencias
+                    .Include(i => i.Usuario)
+                    .Include(i => i.Categoria)
+                    .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+                if (incidencia != null)
+                {
+                    model.Titulo = incidencia.titulo;
+                    model.Descripcion = incidencia.descripcion;
+                    model.ImagenIncidencia = incidencia.imagenIncidencia;
+                    model.NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría";
+                    model.FechaReporte = incidencia.fechaReporte;
+                }
+
+                return View(model);
+            }
+
+            var inc = await _context.Incidencias
+                .Include(i => i.Comentarios)
+                .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+            if (inc == null)
+                return NotFound();
+
+            inc.fechaDescarte = DateTime.Now;
+            inc.estadoIncidencia = EstadoIncidencia.descartado;
+            inc.justificacionDescarte = model.JustificacionDescarte;
+            inc.idUserDescar = 1;// TODO: modificar cuando este el login
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = $"Incidencia - {inc.titulo} - descartada exitosamente";
+            return RedirectToAction("Index");
+        }
         private async Task<string> GuardarImagenTemporal(IFormFile archivo)
         {
             var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".gif" };
