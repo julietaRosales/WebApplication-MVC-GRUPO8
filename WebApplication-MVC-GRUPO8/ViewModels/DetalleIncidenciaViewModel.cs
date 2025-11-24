@@ -17,6 +17,10 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
         [Display(Name = "Imagen Inicial")]
         public string ImagenIncidencia { get; set; }
 
+        [Display(Name = "Fecha de Descarte")]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        public DateTime? FechaDescarte { get; set; }
+
         [Display(Name = "Fecha de Reporte")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
         public DateTime FechaReporte { get; set; }
