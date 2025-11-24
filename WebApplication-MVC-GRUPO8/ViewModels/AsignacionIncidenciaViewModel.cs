@@ -19,6 +19,8 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
 
         [Display(Name = "Categoría")]
         public string? NombreCategoria { get; set; }
+        [Display(Name = "Estado")]
+        public EstadoIncidencia EstadoIncidencia { get; set; }
 
         [Display(Name = "Reportado por")]
         public string? NombreUsuario { get; set; }
