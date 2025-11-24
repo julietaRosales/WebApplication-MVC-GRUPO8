@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication_MVC_GRUPO8.Context;
 
@@ -11,9 +12,11 @@ using WebApplication_MVC_GRUPO8.Context;
 namespace WebApplication_MVC_GRUPO8.Migrations
 {
     [DbContext(typeof(SistemaMantenimientoDBContext))]
-    partial class SistemaMantenimientoDBContextModelSnapshot : ModelSnapshot
+    [Migration("20251124004409_seAgregaFechaDescarte")]
+    partial class seAgregaFechaDescarte
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -118,9 +121,6 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                     b.Property<int?>("idTecnico")
                         .HasColumnType("int");
 
-                    b.Property<int?>("idUserDescar")
-                        .HasColumnType("int");
-
                     b.Property<int>("idUsuario")
                         .HasColumnType("int");
 
@@ -151,8 +151,6 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                     b.HasIndex("idEncargado");
 
                     b.HasIndex("idTecnico");
-
-                    b.HasIndex("idUserDescar");
 
                     b.HasIndex("idUsuario");
 
@@ -221,10 +219,6 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                         .WithMany()
                         .HasForeignKey("idTecnico");
 
-                    b.HasOne("WebApplication_MVC_GRUPO8.Models.User", "UsuarioDescarte")
-                        .WithMany()
-                        .HasForeignKey("idUserDescar");
-
                     b.HasOne("WebApplication_MVC_GRUPO8.Models.User", "Usuario")
                         .WithMany()
                         .HasForeignKey("idUsuario")
@@ -238,8 +232,6 @@ namespace WebApplication_MVC_GRUPO8.Migrations
                     b.Navigation("Tecnico");
 
                     b.Navigation("Usuario");
-
-                    b.Navigation("UsuarioDescarte");
                 });
 
             modelBuilder.Entity("WebApplication_MVC_GRUPO8.Models.Incidencia", b =>

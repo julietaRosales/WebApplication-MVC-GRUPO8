@@ -18,6 +18,7 @@ namespace WebApplication_MVC_GRUPO8.Models
 
         public int? idEncargado { get; set; }
         public int? idTecnico { get; set; }
+        public int? idUserDescar { get; set; }
         public DateTime? fechaAsignacion { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
@@ -32,6 +33,7 @@ namespace WebApplication_MVC_GRUPO8.Models
         public string? justificacionDescarte { get; set; }
         public DateTime? fechaInicioReparacion { get; set; }
         public DateTime? fechaFinReparacion { get; set; }
+        public DateTime? fechaDescarte { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal? costoTotal { get; set; }
@@ -50,6 +52,9 @@ namespace WebApplication_MVC_GRUPO8.Models
 
         [ForeignKey("idTecnico")]
         public virtual User Tecnico { get; set; }
+
+        [ForeignKey("idUserDescar")]
+        public virtual User UsuarioDescarte { get; set; }
         public virtual ICollection<Comentario> Comentarios { get; set; }
     }
 }
