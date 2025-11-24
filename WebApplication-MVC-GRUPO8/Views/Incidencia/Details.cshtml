@@ -234,18 +234,6 @@
 					</div>
 				}
 
-				@* Card: Justificación descarte *@
-				@if (!string.IsNullOrEmpty(Model.JustificacionDescarte))
-				{
-									<div class="card shadow-sm mb-4 border-warning">
-										<div class="card-header bg-warning">
-											<h5 class="mb-0"><i class="bi bi-x-circle"></i> Descartada</h5>
-										</div>
-										<div class="card-body">
-											<p class="mb-0">@Model.JustificacionDescarte</p>
-										</div>
-									</div>
-				}
 			@* COMENTARIO *@
 			@{
 				var comentarios = ViewBag.Comentarios as List<WebApplication_MVC_GRUPO8.ViewModels.ComentarioListaVM>;
@@ -288,6 +276,34 @@
 					<p class="text-muted">No hay comentarios para esta incidencia.</p>
 				}
 			</div>
+
+			@* Card: DESCARTADA *@
+			@if (!string.IsNullOrEmpty(Model.JustificacionDescarte))
+			{
+				<div class="card shadow-sm mb-4">
+					<div class="card-header" style="background-color: #ffa1aa; border-color: #ff1a30;">
+						<h5 class="mb-0"><i class="bi bi-x-circle"></i> Descartada</h5>
+					</div>
+
+					<div class="card-body">
+						<div class="row mb-3">
+							@if (!string.IsNullOrEmpty(Model.NombreUserDescarta) && Model.NombreUserDescarta != "Sin asignar")
+							{
+								<div class="col-md-6">
+									<strong>Descartado por:</strong>
+									<span>@Model.NombreUserDescarta</span>
+								</div>
+							}
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<strong>Justificación:</strong>
+								<span>@Model.JustificacionDescarte</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
 
 			@* Botones de acción (según el estado) *@
 			<div class="d-flex justify-content-center gap-2">
