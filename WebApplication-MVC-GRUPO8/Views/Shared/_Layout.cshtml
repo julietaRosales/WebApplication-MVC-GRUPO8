@@ -36,6 +36,24 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Incidencia" asp-action="Index">Incidencias</a>
                         </li>
                     </ul>
+                    @if (Context.Session.GetString("UserNombre") != null)
+                    {
+                        <div class="d-flex align-items-center">
+                            <span class="me-3 fw-bold">Hola, @Context.Session.GetString("UserNombre")</span>
+
+                            <a asp-controller="Auth" asp-action="Logout"
+                               class="btn btn-outline-danger btn-sm">
+                                Salir
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <a asp-controller="Auth" asp-action="Login"
+                           class="btn btn-outline-primary btn-sm">
+                            Iniciar sesión
+                        </a>
+                    }
                 </div>
             </div>
         </nav>
