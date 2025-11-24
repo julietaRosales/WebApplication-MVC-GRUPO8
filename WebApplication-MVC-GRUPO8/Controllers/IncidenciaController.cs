@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication_MVC_GRUPO8.Context;
 using WebApplication_MVC_GRUPO8.Models;
 using WebApplication_MVC_GRUPO8.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace WebApplication_MVC_GRUPO8.Controllers
 {
@@ -80,15 +81,24 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 rutaTemp = await GuardarImagenTemporal(model.ImagenIncidencia);
 
                 // Crear incidencia
+                var idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+
+                if (idUsuarioActual == null)
+                {
+                    // si no está logeado lo mando a login
+                    return RedirectToAction("Login", "Auth");
+                }
+
                 var incidencia = new Incidencia
                 {
                     titulo = model.Titulo,
                     descripcion = model.Descripcion,
                     fechaReporte = DateTime.Now,
                     idCategoria = model.IdCategoria,
-                    idUsuario = 1,
+                    idUsuario = idUsuarioActual.Value,   
                     estadoIncidencia = EstadoIncidencia.reportado,
-                    imagenIncidencia = rutaTemp // guardamos la temporal
+                    imagenIncidencia = rutaTemp
+
                 };
 
                 _context.Incidencias.Add(incidencia);
