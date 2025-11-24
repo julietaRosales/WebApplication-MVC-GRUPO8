@@ -34,6 +34,9 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
         [Display(Name = "Técnico Asignado")]
         public string NombreTecnico { get; set; }
 
+        [Display(Name = "Descartado por")]
+        public string NombreUserDescarta { get; set; }
+
         [Display(Name = "Categoría")]
         public string NombreCategoria { get; set; }
 
