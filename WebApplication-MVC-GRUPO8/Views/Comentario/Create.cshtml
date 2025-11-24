@@ -3,7 +3,9 @@
 @{
     ViewData["Title"] = "Create";
 }
-
+@{
+    var idIncidencia = Context.Request.Query["idIncidencia"];
+}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -31,8 +33,11 @@
                         @* campo para enviar idIncidencia *@
                         <input type="hidden" asp-for="idIncidencia" />
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                            <a asp-action="Index" class="btn btn-danger">
-                                <i class="bi bi-arrow-left"></i> Cancelar
+                            <a class="btn btn-outline-secondary"
+                               asp-controller="Incidencia"
+                               asp-action="Details"
+                               asp-route-id="@idIncidencia">
+                                <i class="bi bi-arrow-left"></i> Volver
                             </a>
                             <button type="submit" class="btn btn-primary">
                                  Agregar comentario
