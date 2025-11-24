@@ -111,7 +111,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 await transaction.RollbackAsync();
 
@@ -175,20 +175,25 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
             ViewBag.Comentarios = comentarios;
             // TODO: Obtener el usuario logueado real
-            int idUsuarioActual = 0; // CAMBIAR cuando tenga autenticacion
-            RolUsuario rolUsuarioActual = RolUsuario.administrador; // CAMBIAR
+            int? idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+            if (idUsuarioActual == null)
+            {
+                // si no hay usuario logeado lo mando al Login
+                return RedirectToAction("Login", "Auth");
+            }
 
             // Obtener el usuario actual de la BD para saber su rol
             var usuarioActual = await _context.Usuarios.FindAsync(idUsuarioActual);
+            RolUsuario rolUsuarioActual = usuarioActual?.rol ?? RolUsuario.usuario;
             if (usuarioActual != null)
             {
                 rolUsuarioActual = usuarioActual.rol;
             }
 
-            // Pasar datos a la vista
-            ViewBag.RolUsuarioActual = rolUsuarioActual;
-            ViewBag.IdUsuarioActual = idUsuarioActual;
-            ViewBag.EsTecnicoAsignado = incidencia.idTecnico == idUsuarioActual;
+                // Pasar datos a la vista
+                ViewBag.RolUsuarioActual = rolUsuarioActual;
+                ViewBag.IdUsuarioActual = idUsuarioActual;
+                ViewBag.EsTecnicoAsignado = incidencia.idTecnico == idUsuarioActual;
 
 
             // Mapear a ViewModel
@@ -213,6 +218,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 FechaAsignacion = incidencia.fechaAsignacion,
                 Sla = incidencia.sla,
                 JustificacionDescarte = incidencia.justificacionDescarte ?? "-",
+                FechaDescarte= incidencia.fechaDescarte,
                 FechaInicioReparacion = incidencia.fechaInicioReparacion,
                 FechaFinReparacion = incidencia.fechaFinReparacion,
                 CostoTotal = incidencia.costoTotal,
@@ -365,10 +371,15 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             if (inc == null)
                 return NotFound();
 
+            int? idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+            if (idUsuarioActual == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
             inc.idTecnico = model.IdTecnico;
             inc.prioridad = model.Prioridad;
             inc.complejidad = model.Complejidad;
-            inc.idEncargado = 1; //TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
+            inc.idEncargado =idUsuarioActual;
             inc.fechaAsignacion = DateTime.Now;
             inc.sla = CalcularSLA(model.Prioridad, model.Complejidad);
             inc.estadoIncidencia = EstadoIncidencia.asignado;
@@ -379,7 +390,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 {
                     texto = model.ComentarioNuevo,
                     fechaComentario = DateTime.Now,
-                    idUsuario = 1,//TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
+                    idUsuario = idUsuarioActual.Value,//TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
                     idIncidencia = inc.id
                 });
             }
@@ -502,13 +513,21 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             inc.fechaInicioReparacion = DateTime.Now;
             inc.estadoIncidencia = EstadoIncidencia.enReparacion;
 
+             int? idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+            if (idUsuarioActual == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+            var testUser = HttpContext.Session.GetInt32("UserId");
+            Console.WriteLine("ID DE SESION = " + testUser);
+
             if (!string.IsNullOrWhiteSpace(model.ComentarioEvaluacion))
             {
                 inc.Comentarios.Add(new Comentario
                 {
                     texto = model.ComentarioEvaluacion,
                     fechaComentario = DateTime.Now,
-                    idUsuario = 1,//TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
+                    idUsuario = idUsuarioActual.Value,//TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
                     idIncidencia = inc.id
                 });
             }
@@ -576,11 +595,16 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
             if (inc == null)
                 return NotFound();
+            int? idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+            if (idUsuarioActual == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
 
             inc.fechaDescarte = DateTime.Now;
             inc.estadoIncidencia = EstadoIncidencia.descartado;
             inc.justificacionDescarte = model.JustificacionDescarte;
-            inc.idUserDescar = 1;// TODO: modificar cuando este el login
+            inc.idUserDescar = idUsuarioActual;
 
             await _context.SaveChangesAsync();
             TempData["Success"] = $"Incidencia - {inc.titulo} - descartada exitosamente";

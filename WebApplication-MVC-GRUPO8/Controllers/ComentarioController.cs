@@ -66,12 +66,12 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             {
                 return View(model);
             }
-
+            int? idUsuarioActual = HttpContext.Session.GetInt32("UserId");
             var comentario = new Comentario
             {
                 // El ID lo genera EF
                 texto = model.texto,
-                idUsuario = 1,                   // reemplazar cuando tenga el login
+                idUsuario = idUsuarioActual.Value,
                 fechaComentario = DateTime.Now,  // automatico
                 idIncidencia = model.idIncidencia == 0
                 ? 1 // quitar cuando tenga la incidencia real

@@ -27,7 +27,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
             // Buscar usuario
             var user = _context.Usuarios
-                .FirstOrDefault(u => u.email == model.Email && u.password == model.Password);
+          .FirstOrDefault(u => u.email == model.Email && u.password == model.Password);
 
             if (user == null)
             {
