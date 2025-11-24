@@ -1,0 +1,156 @@
+﻿@model WebApplication_MVC_GRUPO8.ViewModels.DescarteIncidencia
+
+@{
+    ViewData["Title"] = "Descartar";
+}
+<div class="container mt-3">
+<div class="row mb-4">
+    <div class="col-12">
+        <a asp-action="Details" asp-route-id="@Model.IdIncidencia" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="text-center">Descartar incidencia #@Model.IdIncidencia</h3>
+    </div>
+    <div class="p-3">
+<div asp-validation-summary="All" class="text-danger"></div>
+
+            <form asp-action="Descartar" method="post">
+    <div class="container mt-4 p-0">
+
+        <div class="card mb-3 shadow" style="border-radius: 20px; overflow: hidden;">
+            <div class="row g-0">
+
+                 @* Imagen izquierda *@
+                <div class="col-md-4" style="max-height: 250px; overflow: hidden;">
+                    @if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
+                    {
+                        <img src="@Model.ImagenIncidencia"
+                             alt="@Model.Titulo"
+                             class="img-fluid h-100 w-100 object-fit-cover" />
+                    }
+                </div>
+
+             @* Contenido derecho  *@
+                <div class="col-md-8">
+                    <div class="card-body" style="height:90%">
+                        <div class="d-flex justify-content-between">
+                            <p class="card-text text-muted">
+                                <i class="bi bi-bookmark me-2"></i>@Model.NombreCategoria
+                            </p>
+                            <div>
+                                @switch (Model.EstadoIncidencia)
+                                {
+                                    case EstadoIncidencia.reportado:
+                                        <span class="badge rounded-pill bg-info text-dark fs-6 ">Reportado</span>
+                                        break;
+                                    case EstadoIncidencia.asignado:
+                                        <span class="badge rounded-pill bg-warning fs-6">Asignado</span>
+                                        break;
+                                    case EstadoIncidencia.enReparacion:
+                                        <span class="badge rounded-pill bg-primary fs-6">En reparacion</span>
+                                        break;
+                                    case EstadoIncidencia.descartado:
+                                        <span class="badge rounded-pill bg-danger fs-6">Descartado</span>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                        <h3 class="card-title">@Model.Titulo</h3>
+                        <p class="card-text">
+                            @Model.Descripcion
+                        </p>
+
+                    </div>
+                    <div class="mt-auto text-start" style="margin-left:20px">
+                        <span>Fecha reportado:</span>
+                        <span>@Model.FechaReporte.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <input type="hidden" asp-for="IdIncidencia" />
+    <div class="mb-3 mt-5">
+           <label asp-for="JustificacionDescarte" class="form-label fw-bold">Justificacion</label>
+           <textarea asp-for="JustificacionDescarte" class="form-control" rows="4"></textarea>
+           <div class="d-flex flex-column"> 
+           <small class="form-text text-muted">
+                        Se requiere entre 10 y 500 caracteres.
+           </small>
+           <span asp-validation-for="JustificacionDescarte" class="text-danger"></span>
+           </div>
+    </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                    <button type="button"
+                            class="btn btn-danger"
+                            id="btnDescartar"
+                            data-bs-toggle="modal"
+                            data-bs-target="#confirmModal"
+                            disabled>
+                        <i class="bi bi-x-circle"></i> Descartar
+                    </button>
+                </div>
+    @* modal *@
+            <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                                <h5 class="modal-title" id="confirmModalLabel"> ¿Estás seguro de que deseas descartar esta incidencia?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+
+                        <div class="modal-body">
+                                <div class="alert alert-warning" role="alert" style="background-color: #f7df97; border-color: #ffa907;">
+                                <strong style="color:#ffa907"> <i class="bi bi-exclamation-circle-fill"></i> Este paso es definitivo y no se podrá revertir.</strong>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-danger">
+                                Aceptar
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+</form>
+</div>
+</div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function() {
+            var textarea = $('#JustificacionDescarte');
+            var btnDescartar = $('#btnDescartar');
+            var minCaracteres = 10;
+
+            function verificarContenido() {
+                var contenido = textarea.val().trim();
+
+                if (contenido.length >= minCaracteres) {
+                    btnDescartar.prop('disabled', false);
+                } else {
+                    btnDescartar.prop('disabled', true);
+                }
+            }
+            verificarContenido();
+            textarea.on('input', function() {
+                verificarContenido();
+            });
+        });
+    </script>
+}
