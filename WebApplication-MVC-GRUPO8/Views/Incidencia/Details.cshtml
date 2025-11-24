@@ -208,7 +208,7 @@
 									<span>$@Model.CostoTotal.Value.ToString("N2")</span>
 								</div>
 							}
-							@if (!string.IsNullOrEmpty(Model.DescripcionGasto))
+							@if (!string.IsNullOrEmpty(Model.DescripcionGasto) && (Model.DescripcionGasto != "-"))
 							{
 								<div class="row mb-3">
 									<strong>Descripción del Gasto:</strong>
@@ -217,19 +217,15 @@
 							}
 						</div>
 					</div>
-					@if (!string.IsNullOrEmpty(Model.ImagenFinalIncidencia))
+					@if (!string.IsNullOrEmpty(Model.ImagenFinalIncidencia) && (Model.ImagenFinalIncidencia != "-"))
 					{
-						<div class="card shadow-sm mb-4">
-							<div class="card-header bg-success text-white">
-								<h5 class="mb-0"><i class="bi bi-check-circle"></i> Imagen Final</h5>
-							</div>
-							<div class="card-body p-0">
+							<div>
+							<strong>Imagen de incidencia finalizada:</strong>
 								<img src="@Model.ImagenFinalIncidencia"
 									 alt="Resultado final"
 									 class="img-fluid w-100"
 									 style="max-height: 400px; object-fit: contain; background-color: #f8f9fa;">
 							</div>
-						</div>
 					}
 					</div>
 				}
@@ -278,7 +274,7 @@
 			</div>
 
 			@* Card: DESCARTADA *@
-			@if (!string.IsNullOrEmpty(Model.JustificacionDescarte))
+			@if (!string.IsNullOrEmpty(Model.JustificacionDescarte) && Model.JustificacionDescarte != "-")
 			{
 				<div class="card shadow-sm mb-4">
 					<div class="card-header" style="background-color: #ffa1aa; border-color: #ff1a30;">
@@ -294,6 +290,10 @@
 									<span>@Model.NombreUserDescarta</span>
 								</div>
 							}
+							<div class="col-md-6">
+								<strong>Fecha:</strong>
+								<span>@Model.FechaDescarte?.ToString("dd/MM/yyyy HH:mm")</span>
+							</div>
 						</div>
 						<div class="row mb-3">
 							<div class="col-md-6">
