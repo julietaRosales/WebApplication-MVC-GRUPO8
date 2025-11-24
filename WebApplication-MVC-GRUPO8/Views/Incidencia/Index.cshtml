@@ -40,7 +40,7 @@
 									<th>Reportado por</th>
 									<th>Fecha</th>
 									<th>Prioridad</th>
-									<th class="text-center">Acciones</th>
+									<th class="text-center">Detalle</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -127,12 +127,11 @@
 										</td>
 								<td class="text-center">
 									<div class="btn-group" role="group">
-										<a asp-action="Details" asp-route-id="@item.id" 
-											class="btn btn-sm btn-info" 
-											title="Ver Detalles">
+										<a asp-action="Details" asp-route-id="@item.id"
+												   class="btn btn-sm btn btn-outline-secondary "
+												   title="Ver Detalles">
 											<i class="bi bi-eye"></i>
 										</a>
-										@* TODO: Agregar botones según el estado y rol del usuario *@
 									</div>
 								</td>
 							</tr>
