@@ -233,6 +233,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 NombreUsuario = $"{incidencia.Usuario?.nombre} {incidencia.Usuario?.apellido}",
                 FechaReporte = incidencia.fechaReporte,
                 NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría",
+                EstadoIncidencia = incidencia.estadoIncidencia,
                 IdTecnico = incidencia.idTecnico ?? 1,
                 Prioridad = incidencia.prioridad,
                 Complejidad = incidencia.complejidad
@@ -337,6 +338,8 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                     model.NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría";
                     model.NombreUsuario = $"{incidencia.Usuario?.nombre} {incidencia.Usuario?.apellido}";
                     model.FechaReporte = incidencia.fechaReporte;
+                    model.Complejidad = incidencia.complejidad;
+                    model.Prioridad = incidencia.prioridad;
                 }
 
                 return View(model);
@@ -398,6 +401,110 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             var key = (prioridad.Value, complejidad.Value);
             return matrizSLA.ContainsKey(key) ? matrizSLA[key] : 24m;
         }
+
+        // GET: Incidencia/Evaluar/x
+        public async Task<IActionResult> Evaluar(int id)
+
+        {
+            CargarCategorias();
+            var incidencia = await _context.Incidencias
+                .Include(i => i.Usuario)
+                .Include(i => i.Categoria)
+                .FirstOrDefaultAsync(i => i.id == id);
+
+            if (incidencia == null)
+                return NotFound();
+
+            var vm = new EvaluacionIncidenciaViewModel
+            {
+                IdIncidencia = incidencia.id,
+                Titulo = incidencia.titulo,
+                Descripcion = incidencia.descripcion,
+                ImagenIncidencia = incidencia.imagenIncidencia,
+                NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría",
+                Prioridad = incidencia.prioridad,
+                Complejidad = incidencia.complejidad,
+                FechaReporte = incidencia.fechaReporte,
+            };
+
+            ViewBag.Prioridades = Enum.GetValues(typeof(Prioridad))
+                          .Cast<Prioridad>()
+                          .Select(p => new SelectListItem
+                          {
+                              Value = ((int)p).ToString(),
+                              Text = p.ToString(),
+                              Selected = incidencia.prioridad == p
+                          })
+                          .ToList();
+
+            ViewBag.Complejidades = Enum.GetValues(typeof(Complejidad))
+                                .Cast<Complejidad>()
+                                .Select(c => new SelectListItem
+                                {
+                                    Value = ((int)c).ToString(),
+                                    Text = c.ToString(),
+                                    Selected = incidencia.complejidad == c
+                                })
+                                .ToList();
+
+
+            return View(vm);
+        }
+
+
+        // POST Evaluar incidencia
+        [HttpPost]
+        public async Task<IActionResult> Evaluar(EvaluacionIncidenciaViewModel model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                // Volver a cargar datos de la incidencia para reconstruir la CARD
+                var incidencia = await _context.Incidencias
+                    .Include(i => i.Usuario)
+                    .Include(i => i.Categoria)
+                    .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+                if (incidencia != null)
+                {
+                    model.Titulo = incidencia.titulo;
+                    model.Descripcion = incidencia.descripcion;
+                    model.ImagenIncidencia = incidencia.imagenIncidencia;
+                    model.NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría";
+                    model.FechaReporte = incidencia.fechaReporte;
+                    model.Complejidad = incidencia.complejidad;
+                    model.Prioridad = incidencia.prioridad;
+                }
+
+                return View(model);
+            }
+
+            var inc = await _context.Incidencias
+                .Include(i => i.Comentarios)
+                .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+            if (inc == null)
+                return NotFound();
+
+            inc.fechaInicioReparacion = DateTime.Now;
+            inc.estadoIncidencia = EstadoIncidencia.enReparacion;
+
+            if (!string.IsNullOrWhiteSpace(model.ComentarioEvaluacion))
+            {
+                inc.Comentarios.Add(new Comentario
+                {
+                    texto = model.ComentarioEvaluacion,
+                    fechaComentario = DateTime.Now,
+                    idUsuario = 1,//TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
+                    idIncidencia = inc.id
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = $"Incidencia - {inc.titulo} - en reparacion";
+            return RedirectToAction("Index");
+        }
+
         private async Task<string> GuardarImagenTemporal(IFormFile archivo)
         {
             var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".gif" };
