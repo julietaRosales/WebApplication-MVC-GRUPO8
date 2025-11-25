@@ -6,6 +6,7 @@ using WebApplication_MVC_GRUPO8.Context;
 using WebApplication_MVC_GRUPO8.Models;
 using WebApplication_MVC_GRUPO8.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace WebApplication_MVC_GRUPO8.Controllers
 {
@@ -232,9 +233,9 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
         // GET: Incidencia/Asignar/x
         public async Task<IActionResult> Asignar(int id)
-
         {
             CargarCategorias();
+
             var incidencia = await _context.Incidencias
                 .Include(i => i.Usuario)
                 .Include(i => i.Categoria)
@@ -242,6 +243,44 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
             if (incidencia == null)
                 return NotFound();
+
+            // Obtener usuario actual
+            var idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+            if (idUsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            var usuarioActual = await _context.Usuarios.FindAsync(idUsuarioActual);
+
+            // Cargar técnicos
+            var tecnicos = _context.Usuarios
+                .Where(u => u.userActivo && u.rol == RolUsuario.tecnico)
+                .Select(u => new
+                {
+                    u.id,
+                    nombre = u.nombre + " " + u.apellido
+                })
+                .ToList();
+
+            // Si el usuario actual ES encargado o administrador, agregarlo arriba de la lista
+            if (usuarioActual.rol == RolUsuario.encargado || usuarioActual.rol == RolUsuario.administrador)
+            {
+                // Insertarlo solo si NO esta en la lista
+                if (!tecnicos.Any(t => t.id == usuarioActual.id))
+                {
+                    tecnicos.Insert(0, new
+                    {
+                        id = usuarioActual.id,
+                        nombre = usuarioActual.nombre + " " + usuarioActual.apellido
+                    });
+                }
+            }
+
+            ViewBag.Tecnicos = new SelectList(
+                tecnicos,
+                "id",
+                "nombre",
+                incidencia.idTecnico 
+            );
 
             var vm = new AsignacionIncidenciaViewModel
             {
@@ -253,44 +292,31 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 FechaReporte = incidencia.fechaReporte,
                 NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría",
                 EstadoIncidencia = incidencia.estadoIncidencia,
-                IdTecnico = incidencia.idTecnico ?? 1,
+                IdTecnico = incidencia.idTecnico ?? 0,
                 Prioridad = incidencia.prioridad,
                 Complejidad = incidencia.complejidad
             };
 
-             ViewBag.Tecnicos = new SelectList(
-                 _context.Usuarios
-                .Where(u => u.rol == RolUsuario.tecnico && u.userActivo)
-                .Select(u => new
-                {
-                    u.id,
-                    nombre = u.nombre + " " + u.apellido
-                })
-                .ToList(),
-                   "id",
-                   "nombre",
-                   incidencia.idTecnico
-                    );
-
+        
             ViewBag.Prioridades = Enum.GetValues(typeof(Prioridad))
-                          .Cast<Prioridad>()
-                          .Select(p => new SelectListItem
-                          {
-                              Value = ((int)p).ToString(),
-                              Text = p.ToString(),
-                              Selected = incidencia.prioridad == p
-                          })
-                          .ToList();
+                .Cast<Prioridad>()
+                .Select(p => new SelectListItem
+                {
+                    Value = ((int)p).ToString(),
+                    Text = p.ToString(),
+                    Selected = incidencia.prioridad == p
+                })
+                .ToList();
 
             ViewBag.Complejidades = Enum.GetValues(typeof(Complejidad))
-                                .Cast<Complejidad>()
-                                .Select(c => new SelectListItem
-                                {
-                                    Value = ((int)c).ToString(),
-                                    Text = c.ToString(),
-                                    Selected = incidencia.complejidad == c
-                                })
-                                .ToList();
+                .Cast<Complejidad>()
+                .Select(c => new SelectListItem
+                {
+                    Value = ((int)c).ToString(),
+                    Text = c.ToString(),
+                    Selected = incidencia.complejidad == c
+                })
+                .ToList();
 
 
             return View(vm);
@@ -518,8 +544,6 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             {
                 return RedirectToAction("Login", "Auth");
             }
-            var testUser = HttpContext.Session.GetInt32("UserId");
-            Console.WriteLine("ID DE SESION = " + testUser);
 
             if (!string.IsNullOrWhiteSpace(model.ComentarioEvaluacion))
             {
@@ -527,14 +551,14 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 {
                     texto = model.ComentarioEvaluacion,
                     fechaComentario = DateTime.Now,
-                    idUsuario = idUsuarioActual.Value,//TOO:MODIFICAR CUANDO TENGA EL USUARIO LOGEADO
+                    idUsuario = idUsuarioActual.Value,
                     idIncidencia = inc.id
                 });
             }
 
             await _context.SaveChangesAsync();
             TempData["Success"] = $"Incidencia - {inc.titulo} - en reparacion";
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", new { id = inc.id });
         }
 
         // GET: Incidencia/Descartar/x
@@ -584,6 +608,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                     model.ImagenIncidencia = incidencia.imagenIncidencia;
                     model.NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría";
                     model.FechaReporte = incidencia.fechaReporte;
+                    model.EstadoIncidencia = incidencia.estadoIncidencia;
                 }
 
                 return View(model);
@@ -610,6 +635,145 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             TempData["Success"] = $"Incidencia - {inc.titulo} - descartada exitosamente";
             return RedirectToAction("Index");
         }
+        // GET: Incidencia/Finalizar/x
+        public async Task<IActionResult> Finalizar(int id)
+
+        {
+            CargarCategorias();
+            var incidencia = await _context.Incidencias
+                .Include(i => i.Usuario)
+                .Include(i => i.Categoria)
+                .FirstOrDefaultAsync(i => i.id == id);
+
+            if (incidencia == null)
+                return NotFound();
+
+            var vm = new ReparacionIncidenciaViewModel
+            {
+                IdIncidencia = incidencia.id,
+                Titulo = incidencia.titulo,
+                Descripcion = incidencia.descripcion,
+                ImagenIncidencia = incidencia.imagenIncidencia,
+                NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría",
+                FechaReporte = incidencia.fechaReporte,
+                EstadoIncidencia=incidencia.estadoIncidencia
+            };
+
+            return View(vm);
+        }
+
+        // FINALIZAR - POST (Guardar incidencia)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Finalizar(ReparacionIncidenciaViewModel model)
+        {
+            Console.WriteLine($"IdIncidencia recibido: {model.IdIncidencia}");
+            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+          
+
+
+            if (!ModelState.IsValid)
+            {
+                CargarCategorias();
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Error: {error.ErrorMessage}");
+                }
+
+                var incidencia = await _context.Incidencias
+                    .Include(i => i.Usuario)
+                    .Include(i => i.Categoria)
+                    .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+                if (incidencia != null)
+                {
+                    model.Titulo = incidencia.titulo;
+                    model.Descripcion = incidencia.descripcion;
+                    model.ImagenIncidencia = incidencia.imagenIncidencia;
+                    model.NombreCategoria = incidencia.Categoria?.nombre ?? "Sin categoría";
+                    model.FechaReporte = incidencia.fechaReporte;
+                }
+
+                return View(model);
+            }
+
+            var inc = await _context.Incidencias
+                .Include(i => i.Comentarios)
+                .FirstOrDefaultAsync(i => i.id == model.IdIncidencia);
+
+            if (inc == null)
+                return NotFound();
+
+            // Validar sesión
+            int? idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+            if (idUsuarioActual == null)
+                return RedirectToAction("Login", "Auth");
+
+            if (!string.IsNullOrWhiteSpace(model.ComentariosProgreso))
+            {
+                inc.Comentarios.Add(new Comentario
+                {
+                    texto = model.ComentariosProgreso,
+                    fechaComentario = DateTime.Now,
+                    idUsuario = idUsuarioActual.Value,
+                    idIncidencia = inc.id
+                });
+            }
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            string rutaTemp = null;
+
+            try
+            {
+                // Guardar imagen final
+                if (model.ImagenFinalIncidencia != null)
+                {
+                    rutaTemp = await GuardarImagenTemporal(model.ImagenFinalIncidencia);
+                    inc.imagenFinalIncidencia = rutaTemp;
+                }
+
+                // Actualizar estado
+                inc.fechaFinReparacion = DateTime.Now;
+                inc.estadoIncidencia = EstadoIncidencia.finalizado;
+                inc.costoTotal = model.CostoTotal;
+                inc.descripcionGasto = model.DescripcionGasto;
+
+                // Guardar comentario
+                if (!string.IsNullOrWhiteSpace(model.ComentariosProgreso))
+                {
+                    inc.Comentarios.Add(new Comentario
+                    {
+                        texto = model.ComentariosProgreso,
+                        fechaComentario = DateTime.Now,
+                        idUsuario = idUsuarioActual.Value,
+                        idIncidencia = inc.id
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                TempData["Success"] = $"Incidencia - {inc.titulo} - finalizada exitosamente";
+                return RedirectToAction("Details", new { id = inc.id });
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+
+                // Si guardaste imagen temporal, eliminarla
+                if (rutaTemp != null)
+                {
+                    var rutaFisica = Path.Combine(_webHostEnvironment.WebRootPath, rutaTemp.TrimStart('/'));
+                    if (System.IO.File.Exists(rutaFisica))
+                    {
+                        System.IO.File.Delete(rutaFisica);
+                    }
+                }
+
+                ModelState.AddModelError("", "Error al guardar la incidencia. Intente nuevamente.");
+                CargarCategorias();
+                return View(model);
+            }
+        }
         private async Task<string> GuardarImagenTemporal(IFormFile archivo)
         {
             var extensionesPermitidas = new[] { ".jpg", ".jpeg", ".png", ".gif" };
@@ -633,8 +797,14 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 Directory.CreateDirectory(carpetaDestino);
 
             string rutaCompleta = Path.Combine(carpetaDestino, nombreArchivo);
-
-            using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+            //OJO CAMBIE ESTO
+            //using (var stream = new FileStream(rutaCompleta, FileMode.Create))
+            // POR ESTO
+            using (var stream = new FileStream(
+            rutaCompleta,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.ReadWrite))
             {
                 await archivo.CopyToAsync(stream);
             }
