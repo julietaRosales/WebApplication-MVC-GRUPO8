@@ -38,9 +38,9 @@
 									<th>Título</th>
 									<th>Estado</th>
 									<th>Reportado por</th>
-									<th>Fecha</th>
+									<th>Fecha Reportado</th>
 									<th>Prioridad</th>
-									<th class="text-center">Detalle</th>
+									<th class="text-center">Ver Detalle</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -74,19 +74,22 @@
 								@switch (item.estadoIncidencia)
 									{
 									case EstadoIncidencia.reportado:
-													<span class="badge rounded-pill bg-info text-dark">Reportado</span>
+													<span class="badge rounded-pill bg-info text-white" style="width:120px">REPORTADO</span>
 										break;
 									case EstadoIncidencia.asignado:
-													<span class="badge rounded-pill bg-warning">Asignado</span>
+													<span class="badge rounded-pill bg-warning text-white" style="width:120px">ASIGNADO</span>
 										break;
 									case EstadoIncidencia.enReparacion:
-													<span class="badge rounded-pill bg-primary">En Reparación</span>
+													<span class="badge rounded-pill bg-primary text-white" style="width:120px">EN REPARACION</span>
 										break;
 									case EstadoIncidencia.descartado:
-													<span class="badge rounded-pill bg-danger">Descartado</span>
+													<span class="badge rounded-pill bg-danger text-white" style="width:120px">DESCARTADO</span>
+										break;
+									case EstadoIncidencia.finalizado:
+													<span class="badge rounded-pill text-white" style="background-color:#8b78b8;width:120px">FINALIZADO</span>
 										break;
 										default:
-													<span class="badge rounded-pill bg-light text-dark">@item.estadoIncidencia</span>
+													<span class="badge rounded-pill bg-light text-white" style="background-color:#8b78b8; width:120px">@item.estadoIncidencia</span>
 										break;
 									}
 								</td>
