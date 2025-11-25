@@ -41,6 +41,7 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
         [Display(Name = "Complejidad")]
         public Complejidad? Complejidad { get; set; }
 
+        [Required(ErrorMessage = "Debe completar este campo")]
         [MaxLength(500, ErrorMessage = "El comentario no puede exceder 500 caracteres")]
         [Display(Name = "Agregar comentario")]
         [DataType(DataType.MultilineText)]
