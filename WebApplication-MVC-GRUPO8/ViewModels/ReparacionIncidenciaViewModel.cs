@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebApplication_MVC_GRUPO8.Models;
 
 namespace WebApplication_MVC_GRUPO8.ViewModels
 {
@@ -8,16 +9,22 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
 
         // Datos de la incidencia (para mostrar en la vista)
         [Display(Name = "Título")]
-        public string Titulo { get; set; }
+        public string? Titulo { get; set; }
 
         [Display(Name = "Descripción")]
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
 
-        // Campos que el técnico debe completar
-        [Required(ErrorMessage = "La fecha de inicio es obligatoria")]
-        [Display(Name = "Fecha de Inicio")]
-        [DataType(DataType.DateTime)]
-        public DateTime FechaInicioReparacion { get; set; } = DateTime.Now;
+        [Display(Name = "Categoría")]
+        public string? NombreCategoria { get; set; }
+
+        [Display(Name = "Imagen")]
+        public string? ImagenIncidencia { get; set; }
+
+        [Display(Name = "Fecha de Reporte")]
+        public DateTime? FechaReporte { get; set; }
+
+        [Display(Name = "Estado")]
+        public EstadoIncidencia? EstadoIncidencia { get; set; }
 
         [Required(ErrorMessage = "La fecha de finalización es obligatoria")]
         [Display(Name = "Fecha de Finalización")]
@@ -39,9 +46,9 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
         [MaxLength(500, ErrorMessage = "Los comentarios no pueden exceder 500 caracteres")]
         [Display(Name = "Comentarios de Progreso")]
         [DataType(DataType.MultilineText)]
-        public string ComentariosProgreso { get; set; }
+        public string? ComentariosProgreso { get; set; }
 
         [Display(Name = "Foto Final (Opcional)")]
-        public IFormFile ImagenFinalIncidencia { get; set; }
+        public IFormFile? ImagenFinalIncidencia { get; set; }
     }
 }
