@@ -73,9 +73,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
                 texto = model.texto,
                 idUsuario = idUsuarioActual.Value,
                 fechaComentario = DateTime.Now,  // automatico
-                idIncidencia = model.idIncidencia == 0
-                ? 1 // quitar cuando tenga la incidencia real
-                : model.idIncidencia
+                idIncidencia = model.idIncidencia
             };
 
             _context.Comentarios.Add(comentario);
@@ -83,7 +81,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
             TempData["Success"] = "Comentario agregado correctamente";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details","Incidencia", new { id = model.idIncidencia });
         }
 
         // GET: Comentario/Edit/5
