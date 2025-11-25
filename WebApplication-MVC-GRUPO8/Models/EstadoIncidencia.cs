@@ -10,6 +10,7 @@ namespace WebApplication_MVC_GRUPO8.Models
         reportado,
         asignado,
         enReparacion,
-        descartado
+        descartado,
+        finalizado
     }
 }
