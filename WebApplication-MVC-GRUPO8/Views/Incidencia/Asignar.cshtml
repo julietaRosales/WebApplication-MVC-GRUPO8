@@ -22,7 +22,7 @@
     <div class="container mt-4">
 
         <div class="card mb-3 shadow" style="border-radius: 20px; overflow: hidden;">
-            <div class="row g-0">
+            <div class="row g-0" style="height:230px">
 
                  @* Imagen izquierda *@
                 <div class="col-md-4" style="max-height: 250px; overflow: hidden;">
@@ -45,17 +45,20 @@
                                 @switch (Model.EstadoIncidencia)
                                 {
                                     case EstadoIncidencia.reportado:
-                                        <span class="badge rounded-pill bg-info text-dark fs-6 ">Reportado</span>
+                                        <span class="badge rounded-pill bg-info fs-6 ">REPORTADO</span>
                                         break;
                                     case EstadoIncidencia.asignado:
-                                        <span class="badge rounded-pill bg-warning fs-6">Asignado</span>
+                                        <span class="badge rounded-pill bg-warning fs-6">ASIGNADO</span>
                                         break;
                                     case EstadoIncidencia.enReparacion:
-                                        <span class="badge rounded-pill bg-primary fs-6">En reparacion</span>
+                                        <span class="badge rounded-pill bg-primary fs-6">EN REPARACION</span>
                                         break;
                                     case EstadoIncidencia.descartado:
-                                        <span class="badge rounded-pill bg-danger fs-6">Descartado</span>
+                                        <span class="badge rounded-pill bg-danger fs-6">DESCARTADO</span>
                                         break;
+                                     case EstadoIncidencia.finalizado:
+                                         <span class="badge rounded-pill fs-6" style="background-color:#8b78b8">FINALIZADO</span>
+                                         break;
                                 }
                             </div>
                         </div>
@@ -65,7 +68,7 @@
                         </p>
                     </div>
                     <div class="mt-auto text-start" style="margin-left:20px">
-                        <span>Fecha reportado:</span>
+                        <span>Reportado:</span>
                         <span>@Model.FechaReporte.ToString("dd/MM/yyyy HH:mm")</span>
                     </div>
                 </div>
@@ -98,13 +101,13 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="Complejidad" class="form-label fw-bold">Complejidad</label>
-        <select asp-for="Complejidad"
+                        <label asp-for="Complejidad" class="form-label fw-bold">Complejidad</label>
+                        <select asp-for="Complejidad"
                 class="form-select"
                 asp-items="ViewBag.Complejidades">
             <option value="">-- Seleccione complejidad --</option>
-            <span asp-validation-for="Complejidad" class="text-danger"></span>
         </select>
+            <span asp-validation-for="Complejidad" class="text-danger"></span>
     </div>
     <div class="mb-3">
         <label asp-for="ComentarioNuevo" class="form-label fw-bold"></label>
