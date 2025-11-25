@@ -1,0 +1,209 @@
+﻿@model WebApplication_MVC_GRUPO8.ViewModels.ReparacionIncidenciaViewModel
+
+@{
+    ViewData["Title"] = "Finalizar Incidencia";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0 text-center">
+                        Finalizar Incidencia #@Model.IdIncidencia
+                    </h3>
+                </div>
+                <div class="card-body">
+
+                    @* Mensajes de error general*@
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    @* Formulario con enctype para archivos *@
+                    <form asp-action="Finalizar" method="post" enctype="multipart/form-data">
+                        <div class="container mt-4">
+
+                            <div class="card mb-3 shadow" style="border-radius: 20px; overflow: hidden;">
+                                <div class="row g-0" style="height:230px">
+
+                                    @* Imagen izquierda *@
+                                    <div class="col-md-4" style="max-height: 250px; overflow: hidden;">
+                                        @if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
+                                        {
+                                            <img src="@Model.ImagenIncidencia"
+                                                 alt="@Model.Titulo"
+                                                 class="img-fluid h-100 w-100 object-fit-cover" />
+                                        }
+                                    </div>
+
+                                    @* Contenido derecho  *@
+                                    <div class="col-md-8">
+                                        <div class="card-body" style="height:90%">
+                                            <div class="d-flex justify-content-between">
+                                                <p class="card-text text-muted">
+                                                    <i class="bi bi-bookmark me-2"></i>@Model.NombreCategoria
+                                                </p>
+                                                <div>
+                                                    @switch (Model.EstadoIncidencia)
+                                                    {
+                                                        case EstadoIncidencia.reportado:
+                                                            <span class="badge rounded-pill bg-info fs-6 ">REPORTADO</span>
+                                                            break;
+                                                        case EstadoIncidencia.asignado:
+                                                            <span class="badge rounded-pill bg-warning fs-6">ASIGNADO</span>
+                                                            break;
+                                                        case EstadoIncidencia.enReparacion:
+                                                            <span class="badge rounded-pill bg-primary fs-6">EN REPARACION</span>
+                                                            break;
+                                                        case EstadoIncidencia.descartado:
+                                                            <span class="badge rounded-pill bg-danger fs-6">DESCARTADO</span>
+                                                            break;
+                                                        case EstadoIncidencia.finalizado:
+                                                            <span class="badge rounded-pill fs-6" style="background-color:#8b78b8">FINALIZADO</span>
+                                                            break;
+                                                    }
+                                                </div>
+                                            </div>
+                                            <h3 class="card-title">@Model.Titulo</h3>
+                                            <p class="card-text">
+                                                @Model.Descripcion
+                                            </p>
+                                        </div>
+                                        <div class="mt-auto text-start" style="margin-left:20px">
+                                            <span>Reportado:</span>
+                                            <span>@Model.FechaReporte?.ToString("dd/MM/yyyy HH:mm")</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <input type="hidden" asp-for="IdIncidencia" />
+                        <div class="mb-3">
+                            <label asp-for="CostoTotal" class="form-label">Costo total</label>
+                            <input asp-for="CostoTotal"
+                                   type="number"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="0.00" />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="DescripcionGasto" class="form-label">
+                               Descripción del gasto
+                            </label>
+                            <textarea asp-for="DescripcionGasto"
+                                      class="form-control" 
+                                      rows="5" 
+                                      placeholder="Describa el gasto con el mayor detalle"></textarea>
+                            <span asp-validation-for="DescripcionGasto" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Máximo 1000 caracteres.
+                            </small>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ComentariosProgreso" class="form-label">Comentario(opcional)</label>
+                            <textarea asp-for="ComentariosProgreso" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="ComentariosProgreso" class="text-danger"></span>
+                        </div>
+
+                        @* Imagen *@
+                        <div class="mb-3">
+                            <label asp-for="ImagenFinalIncidencia" class="form-label">
+                                Imagen de finalizacion(opcional)
+                            </label>
+                            <input asp-for="ImagenFinalIncidencia"
+                                   id="inputImagen"
+                                   type="file"
+                                   class="form-control"
+                                   accept=".jpg,.jpeg,.png,.gif"
+                                   onchange="previewImage(event)" />
+                            <span asp-validation-for="ImagenFinalIncidencia" class="text-danger"></span>
+                            <small class="form-text text-muted">
+                                Formatos permitidos: JPG, PNG, GIF. Tamaño máximo: 5MB
+                            </small>
+                            @* Vista previa de la imagen *@
+                            <div id="preview-container" class="mt-3 position-relative" style="display: none; max-width: 400px;">
+                                <p class="text-muted">Vista previa:</p>
+
+                                @* Botón de cerrar flotante *@
+                                <button type="button"
+                                        class="btn btn btn-light btn-sm position-absolute"
+                                        onclick="removeImage()"
+                                        style="top: 30px; right: 0px; z-index: 10; border-radius: 50%; width: 25px; height: 25px; padding: 0;"
+                                        title="Eliminar imagen">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+
+                                <img id="preview-image"
+                                     src="#"
+                                     alt="Vista previa"
+                                     class="img-thumbnail w-100" />
+                            </div>
+                        </div>
+                        @* Botones *@
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                            <a asp-action="Index" class="btn btn-danger">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Finalizar Incidencia
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Vista previa de la imagen antes de subir
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('preview-container');
+
+            if (file) {
+                // Validar tamaño (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('El archivo es demasiado grande. Máximo 5MB.');
+                    event.target.value = '';
+                    previewContainer.style.display = 'none';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('preview-image').src = e.target.result;
+                    previewContainer.style.opacity = '0';
+                    previewContainer.style.display = 'block';
+                    setTimeout(() => {
+                        previewContainer.style.opacity = '1';
+                    }, 10);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
+
+        function removeImage() {
+            const previewContainer = document.getElementById('preview-container');
+            const inputImagen = document.getElementById('inputImagen');
+
+            previewContainer.style.opacity = '0';
+
+            setTimeout(() => {
+                inputImagen.value = '';
+
+                previewContainer.style.display = 'none';
+
+                document.getElementById('preview-image').src = '#';
+            }, 300);
+        }
+    </script>
+}

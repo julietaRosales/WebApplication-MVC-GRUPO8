@@ -16,73 +16,95 @@
 	<div class="card shadow-sm mb-4">
 
 		<div class="card-header bg-primary text-white">
-				<h3 class="text-center">Incidencia #@Model.Id</h3>
+			<h3 class="text-center">Incidencia #@Model.Id</h3>
+		</div>
+		@* Mensaje de exito (si existe) *@
+		@if (TempData["Success"] != null)
+		{
+			<div class="alert alert-success alert-dismissible fade show" role="alert">
+				<i class="bi bi-check-circle"></i> @TempData["Success"]
+				<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 			</div>
-		 <div class="p-3">
-				@* @* CARD principal *@
-				<div class="container mt-4 p-0">
+		}
+		<div class="p-3">
+			@* @* CARD principal *@
+			<div class="container mt-4 p-0">
 
-					<div class="card mb-3 shadow" style="border-radius: 20px; overflow: hidden;">
-						<div class="row g-0">
+				<div class="card mb-3 shadow" style="border-radius: 20px; overflow: hidden;">
+					<div class="row g-0" style="height:230px">
 
-							<!-- Imagen izquierda -->
-							<div class="col-md-4" style="max-height: 250px; overflow: hidden;">
-								@if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
-								{
-									<img src="@Model.ImagenIncidencia"
-									alt="@Model.Titulo"
-									class="img-fluid h-100 w-100 object-fit-cover" />
-								}
-							</div>
+						<!-- Imagen izquierda -->
+						<div class="col-md-4" style="max-height: 250px; overflow: hidden;">
+							@if (!string.IsNullOrEmpty(Model.ImagenIncidencia))
+							{
+								<img src="@Model.ImagenIncidencia"
+								alt="@Model.Titulo"
+								class="img-fluid h-100 w-100 object-fit-cover" />
+							}
+						</div>
 
-							<!-- Contenido derecho -->
-							<div class="col-md-8">
-								<div class="card-body " style="height:90%">
-									<div class="d-flex justify-content-between">
-										<p class="card-text text-muted">
-											<i class="bi bi-bookmark me-2"></i>@Model.NombreCategoria
-										</p>
-										<div>
-											@switch (Model.EstadoIncidencia)
-											{
-												case EstadoIncidencia.reportado:
-													<span class="badge rounded-pill bg-info text-dark fs-6 ">Reportado</span>
-													break;
-												case EstadoIncidencia.asignado:
-													<span class="badge rounded-pill bg-warning fs-6">Asignado</span>
-													break;
-												case EstadoIncidencia.enReparacion:
-													<span class="badge rounded-pill bg-primary fs-6">En reparacion</span>
-													break;
-												case EstadoIncidencia.descartado:
-													<span class="badge rounded-pill bg-danger fs-6">Descartado</span>
-													break;
-											}
-										</div>
-									</div>
-
-
-									<h3 class="card-title">@Model.Titulo</h3>
-
-									<p class="card-text">
-										@Model.Descripcion
+						<!-- Contenido derecho -->
+						<div class="col-md-8">
+							<div class="card-body " style="height:90%">
+								<div class="d-flex justify-content-between">
+									<p class="card-text text-muted">
+										<i class="bi bi-bookmark me-2"></i>@Model.NombreCategoria
 									</p>
-								</div>
-								<div class="mt-auto text-start" style="margin-left:20px">
-									<span>Fecha reportado:</span>
-									<span>@Model.FechaReporte.ToString("dd/MM/yyyy HH:mm")</span>
+									<div>
+										@switch (Model.EstadoIncidencia)
+										{
+											case EstadoIncidencia.reportado:
+												<span class="badge rounded-pill bg-info fs-6 ">REPORTADO</span>
+												break;
+											case EstadoIncidencia.asignado:
+												<span class="badge rounded-pill bg-warning fs-6">ASIGNADO</span>
+												break;
+											case EstadoIncidencia.enReparacion:
+												<span class="badge rounded-pill bg-primary fs-6">EN REPARACION</span>
+												break;
+											case EstadoIncidencia.descartado:
+												<span class="badge rounded-pill bg-danger fs-6">DESCARTADO</span>
+												break;
+											case EstadoIncidencia.finalizado:
+												<span class="badge rounded-pill fs-6" style="background-color:#8b78b8">FINALIZADO</span>
+												break;
+										}
+									</div>
 								</div>
 
+
+								<h3 class="card-title">@Model.Titulo</h3>
+
+								<p class="card-text">
+									@Model.Descripcion
+								</p>
+							</div>
+							<div class="mt-auto text-start" style="margin-left:20px">
+								<span>Reportado:</span>
+								<span>@Model.FechaReporte.ToString("dd/MM/yyyy HH:mm")</span>
 							</div>
 
 						</div>
-					</div>
 
+					</div>
 				</div>
+
+			</div>
 			@* DETALLE *@
 			<div class="card shadow-sm mb-4">
 				<div class="card-header">
-					<h5 class="mb-0"><i class="bi bi-file-text"></i> Detalles</h5>
+					<div class="d-flex justify-content-between align-items-start">
+						<h5 class="mb-0"><i class="bi bi-file-text"></i> Detalles</h5>
+						@if (EstadoIncidencia.asignado == Model.EstadoIncidencia && (Model.NombreEncargado == "Sin asignar"))
+						{
+							<a asp-action="Asignar"
+							asp-route-id="@Model.Id"
+							class="btn" style="background-color: #47a478; color:white; width:110px">
+								<i class="bi bi-pencil-square"></i>
+								Editar
+							</a>
+						}
+					</div>
 				</div>
 
 				<div class="card-body">
@@ -141,64 +163,65 @@
 						</div>
 					}
 					@if (!string.IsNullOrEmpty(Model.NombreEncargado) && Model.NombreEncargado != "Sin asignar"){
-					<div class="row mb-3">
-						<div class="col-md-6">
-							<strong>Técnico:</strong>
-							<span>@Model.NombreTecnico</span>
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<strong>Técnico:</strong>
+								<span>@Model.NombreTecnico</span>
+							</div>
+
+							<div class="col-md-6">
+								<strong>Fecha  Asignación:</strong>
+								@if (Model.FechaAsignacion.HasValue)
+								{
+									<span>@Model.FechaAsignacion.Value.ToString("dd/MM/yyyy HH:mm") </span>
+								}
+								else
+								{<span>-</span>
+
+								}
+							</div>
+
+						</div>
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<strong>SLA (horas):</strong>
+								@if (Model.Sla.HasValue)
+								{
+									<span>@Model.Sla.Value.ToString("0") </span>
+								}
+								else
+								{
+									<span>-</span>
+								}
+							</div>
 						</div>
 
-						<div class="col-md-6">
-							<strong>Fecha  Asignación:</strong>
-							@if (Model.FechaAsignacion.HasValue)
-							{
-								<span>@Model.FechaAsignacion.Value.ToString("dd/MM/yyyy HH:mm") </span>
-							}
-							else
-							{<span>-</span>
-							
-							}
-						</div>
-
-					</div>
-					<div class="row mb-3">
-						<div class="col-md-6">
-							<strong>SLA (horas):</strong>
-							@if (Model.Sla.HasValue)
-							{
-								<span>@Model.Sla.Value.ToString("0") </span>
-							}
-							else
-							{
-								<span>-</span>
-							}
-						</div>
-						</div>
-					
-				}
+					}
 				</div>
 			</div>
 			@* REPARACION *@
-				@if (Model.FechaInicioReparacion.HasValue)
-				{
-					<div class="card shadow-sm mb-4">
-						<div class="card-header">
-							<h5 class="mb-0"><i class="bi bi-tools"></i> Reparación</h5>
-						</div>
-						<div class="card-body">
-							<div class="row mb-3">
-								@if (Model.FechaInicioReparacion.HasValue){
+			@if (Model.FechaInicioReparacion.HasValue)
+			{
+				<div class="card shadow-sm mb-4">
+					<div class="card-header">
+						<h5 class="mb-0"><i class="bi bi-tools"></i> Reparación</h5>
+					</div>
+					<div class="card-body">
+						<div class="row mb-3">
+							@if (Model.FechaInicioReparacion.HasValue)
+							{
 								<div class="col-md-6">
 									<strong>Fecha inicio:</strong>
-										<span>@Model.FechaInicioReparacion.Value.ToString("dd/MM/yyyy HH:mm")</span>
+									<span>@Model.FechaInicioReparacion.Value.ToString("dd/MM/yyyy HH:mm")</span>
 								</div>
-								}
-								@if (Model.FechaFinReparacion.HasValue)
-								{
-									<div class="col-md-6">
-										<strong>Fecha fin:</strong>
-										<span>@Model.FechaFinReparacion.Value.ToString("dd/MM/yyyy HH:mm")</span>
-									</div>
-								}
+							}
+							@if (Model.FechaFinReparacion.HasValue)
+							{
+								<div class="col-md-6">
+									<strong>Fecha fin:</strong>
+									<span>@Model.FechaFinReparacion.Value.ToString("dd/MM/yyyy HH:mm")</span>
+								</div>
+							}
 						</div>
 						<div class="row mb-3">
 							@if (Model.CostoTotal.HasValue)
@@ -210,26 +233,32 @@
 							}
 							@if (!string.IsNullOrEmpty(Model.DescripcionGasto) && (Model.DescripcionGasto != "-"))
 							{
-								<div class="row mb-3">
+								<div class="col-md-6">
 									<strong>Descripción del Gasto:</strong>
 									<span>@Model.DescripcionGasto</span>
 								</div>
 							}
 						</div>
-					</div>
-					@if (!string.IsNullOrEmpty(Model.ImagenFinalIncidencia) && (Model.ImagenFinalIncidencia != "-"))
-					{
-							<div>
-							<strong>Imagen de incidencia finalizada:</strong>
-								<img src="@Model.ImagenFinalIncidencia"
-									 alt="Resultado final"
-									 class="img-fluid w-100"
-									 style="max-height: 400px; object-fit: contain; background-color: #f8f9fa;">
-							</div>
-					}
-					</div>
-				}
+						@if (!string.IsNullOrEmpty(Model.ImagenFinalIncidencia) && (Model.ImagenFinalIncidencia != "-"))
+						{
+							<div class="row mb-3">
+								<div class="col-md-6">
+									<strong>Imagen de incidencia finalizada:</strong>
+									<div class="mt-2">
+										<img src="@Model.ImagenFinalIncidencia"
+										alt="Resultado final"
+										class="img-fluid img-thumbnail"
+										style="max-height: 250px; object-fit: cover;">
+									</div>
+								</div>
+								<div class="col-md-6">
 
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			}
 			@* COMENTARIO *@
 			@{
 				var comentarios = ViewBag.Comentarios as List<WebApplication_MVC_GRUPO8.ViewModels.ComentarioListaVM>;
@@ -237,15 +266,15 @@
 			<div class="card shadow-sm mb-4">
 				<div class="card-header">
 					<div class="d-flex justify-content-between align-items-start">
-					<h5 class="mb-0 "><i class="bi bi-chat-square-text"></i> Comentarios</h5>
-					@* Botón de comentarios (todos pueden comentar) *@
-					<a asp-controller="Comentario"
-					   asp-action="Create"
-					   asp-route-idIncidencia="@Model.Id"
-					   class="btn" style="background-color: #47a478; color:white">
-						<i class="bi bi-plus-circle"></i>
-						Agregar
-					</a>
+						<h5 class="mb-0 "><i class="bi bi-chat-square-text"></i> Comentarios</h5>
+						@* Botón de comentarios (todos pueden comentar) *@
+						<a asp-controller="Comentario"
+						asp-action="Create"
+						asp-route-idIncidencia="@Model.Id"
+						class="btn" style="background-color: #47a478; color:white ;width:110px">
+							<i class="bi bi-plus-circle"></i>
+							Agregar
+						</a>
 					</div>
 				</div>
 				@if (comentarios != null && comentarios.Any())
@@ -307,86 +336,95 @@
 
 			@* Botones de acción (según el estado) *@
 			<div class="d-flex justify-content-center gap-2">
-					@{
-						var rolActual = (RolUsuario)ViewBag.RolUsuarioActual;
-						var esTecnicoAsignado = (bool)ViewBag.EsTecnicoAsignado;
+				@{
+					var rolActual = (RolUsuario)ViewBag.RolUsuarioActual;
+					var esTecnicoAsignado = (bool)ViewBag.EsTecnicoAsignado;
+				}
+
+				@* ADMINISTRADOR - Puede hacer todo *@
+				@if (rolActual == RolUsuario.administrador)
+				{
+					@if (Model.EstadoIncidencia == EstadoIncidencia.reportado)
+					{
+						<a asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
+							<i class="bi bi-person-check"></i> 
+							Asignar Técnico
+						</a>
+
+
+						<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
+							<i class="bi bi-x-circle"></i> 	
+							Descartar
+						</a>
+
+
 					}
 
-					@* ADMINISTRADOR - Puede hacer todo *@
-					@if (rolActual == RolUsuario.administrador)
+					@if (Model.EstadoIncidencia == EstadoIncidencia.asignado)
 					{
-						@if (Model.EstadoIncidencia == EstadoIncidencia.reportado)
-						{
-									<a asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
-										<i class="bi bi-person-check"></i> 
-										Asignar Técnico
-									</a>
-									
-						
-									<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
-										<i class="bi bi-x-circle"></i> 	
-										Descartar
-									</a>
-								
+						<a asp-action="Evaluar" asp-route-id="@Model.Id" class="btn btn-info">
+							<i class="bi bi-clipboard-check"></i> 
+							Evaluar
+						</a>
+						<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
+							<i class="bi bi-x-circle"></i>
+							Descartar
+						</a>
 
-						}
-
-						@if (Model.EstadoIncidencia == EstadoIncidencia.asignado)
-						{
-									<a asp-action="Evaluar" asp-route-id="@Model.Id" class="btn btn-info">
-										@* <i class="bi bi-clipboard-check"></i>  *@
-										Evaluar
-									</a>
-				<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
-					<i class="bi bi-x-circle"></i>
-					Descartar
-				</a>
-
-						}
-
-						@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion)
-						{
-									<a asp-action="FinalizarReparacion" asp-route-id="@Model.Id" class="btn btn-success">
-										@* <i class="bi bi-check-circle"></i> *@
-										Finalizar Reparación
-									</a>
-						}
 					}
 
-					@* ENCARGADO - Asigna, evalua y repara si se asigno a si mismo *@
-					@if (rolActual == RolUsuario.encargado)
+					@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion)
 					{
-						@if (Model.EstadoIncidencia == EstadoIncidencia.reportado)
-						{
-									<a  asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
-										<i class="bi bi-person-check"></i> 
-										 Asignar Técnico
-									</a>
-									<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
-												<i class="bi bi-x-circle"></i>
-												Descartar 
-									</a>
-						}
+						<a asp-action="Finalizar" asp-route-id="@Model.Id" class="btn btn-success">
+							@* <i class="bi bi-check-circle"></i> *@
+							Finalizar Reparación
+						</a>
+						<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
+							<i class="bi bi-x-circle"></i>
+							Descartar
+						</a>
+					}
+				}
 
-						@* Si esta asignado y es el tecnico asignado *@
-						@if (Model.EstadoIncidencia == EstadoIncidencia.asignado && esTecnicoAsignado)
-						{
-									<a asp-action="Evaluar" asp-route-id="@Model.Id" class="btn btn-info">
-										@* <i class="bi bi-clipboard-check"></i> *@
-										Evaluar
-									</a>
-									 <a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger"> 
-								 		@* <i class="bi bi-x-circle"></i>  *@
-										 Descartar 
-									</a> 
-						}
+				@* ENCARGADO*@
+				@{
+					var puedeEvaluar = Model.EstadoIncidencia == EstadoIncidencia.asignado && esTecnicoAsignado;
+					var disabledEvaluar = puedeEvaluar ? "" : "disabled";
+					var puedeFinalizar = Model.EstadoIncidencia == EstadoIncidencia.enReparacion && esTecnicoAsignado;
+					var disabledFinalizar = puedeFinalizar ? "" : "disabled";
+					var disabledDescartar = puedeEvaluar || puedeFinalizar || Model.EstadoIncidencia == EstadoIncidencia.reportado ? "" : "disabled";
+				}
+				@if (rolActual == RolUsuario.encargado)
+				{
+					@if (Model.EstadoIncidencia == EstadoIncidencia.reportado)
+					{
+						<a  asp-action="Asignar" asp-route-id="@Model.Id" class="btn btn-primary">
+							<i class="bi bi-person-check"></i> 
+							Asignar Técnico
+						</a>
+					}
 
-						@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion && esTecnicoAsignado)
-						{
-									<a asp-action="FinalizarReparacion" asp-route-id="@Model.Id" class="btn btn-success">
+					@* Si esta asignado y es el tecnico asignado *@
+					@if (Model.EstadoIncidencia == EstadoIncidencia.asignado)
+					{
+						<a asp-action="Evaluar" 
+						asp-route-id="@Model.Id"
+						class="btn btn-info @disabledEvaluar">
+							<i class="bi bi-clipboard-check"></i>
+							Evaluar
+						</a>
+					}
+					@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion)
+					{
+					<a asp-action="Finalizar" asp-route-id="@Model.Id" class="btn btn-success @disabledFinalizar">
 										<i class="bi bi-check-circle"></i> Finalizar Reparación
 									</a>
-						}
+						
+					}
+					<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger @disabledDescartar">
+									<i class="bi bi-x-circle"></i>
+										Descartar
+									</a>
 					}
 
 					@* TECNICO - Solo puede operar en sus incidencias asignadas *@
@@ -404,10 +442,14 @@
 
 						@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion)
 						{
-									<a asp-action="FinalizarReparacion" asp-route-id="@Model.Id" class="btn btn-success">
+									<a asp-action="Finalizar" asp-route-id="@Model.Id" class="btn btn-success">
 										<i class="bi bi-check-circle"></i> Finalizar Reparación
 									</a>
-						}
+									<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
+										<i class="bi bi-x-circle"></i>
+										Descartar
+									</a>
+					}
 					}
 
 					@* USUARIO - No ve botones de acción, solo puede reportar *@
