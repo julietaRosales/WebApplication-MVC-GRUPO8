@@ -40,6 +40,7 @@
 									<th>Reportado</th>
 									<th>Fecha Reportado</th>
 									<th>Prioridad</th>
+									<th>Complejidad</th>
 									<th>Asignado</th>
 									<th>Fecha Inicio</th>
 									<th>Fecha Fin</th>
@@ -77,22 +78,22 @@
 											@switch (item.estadoIncidencia)
 											{
 												case EstadoIncidencia.reportado:
-													<span class="badge rounded-pill bg-info text-white" style="width:120px">REPORTADO</span>
+													<span class="badge rounded-pill bg-info text-white" style="width:100px">REPORTADO</span>
 													break;
 												case EstadoIncidencia.asignado:
-													<span class="badge rounded-pill bg-warning text-white" style="width:120px">ASIGNADO</span>
+													<span class="badge rounded-pill bg-warning text-white" style="width:100px">ASIGNADO</span>
 													break;
 												case EstadoIncidencia.enReparacion:
-													<span class="badge rounded-pill bg-primary text-white" style="width:120px">EN REPARACION</span>
+													<span class="badge rounded-pill bg-primary text-white" style="width:100px">REPARACIÓN</span>
 													break;
 												case EstadoIncidencia.descartado:
-													<span class="badge rounded-pill bg-danger text-white" style="width:120px">DESCARTADO</span>
+													<span class="badge rounded-pill bg-danger text-white" style="width:100px">DESCARTADO</span>
 													break;
 												case EstadoIncidencia.finalizado:
-													<span class="badge rounded-pill text-white" style="background-color:#8b78b8;width:120px">FINALIZADO</span>
+													<span class="badge rounded-pill text-white" style="background-color:#8b78b8;width:100px">FINALIZADO</span>
 													break;
 												default:
-													<span class="badge rounded-pill bg-light text-white" style="background-color:#8b78b8; width:120px">@item.estadoIncidencia</span>
+													<span class="badge rounded-pill bg-light text-white" style="background-color:#8b78b8; width:100px">@item.estadoIncidencia</span>
 													break;
 											}
 										</td>
@@ -116,19 +117,40 @@
 												switch (item.prioridad.Value)
 												{
 													case Prioridad.alta:
-														<span class="badge bg-danger" style="width:50px">Alta</span>
+														<span class="badge border border-danger text-danger" style="width:50px">Alta</span>
 														break;
 													case Prioridad.media:
-														<span class="badge bg-warning text-dark" style="width:50px">Media</span>
+														<span class="badge badge border border-warning  text-warning" style="width:50px">Media</span>
 														break;
 													case Prioridad.baja:
-														<span class="badge bg-success" style="width:50px">Baja</span>
+														<span class="badge border border-success text-success" style="width:50px">Baja</span>
 														break;
 												}
 											}
 											else
 											{
-												<span class="text-muted">Sin asignar</span>
+												<span class="text-muted">-</span>
+											}
+										</td>
+										<td>
+											@if (item.complejidad.HasValue)
+											{
+												switch (item.complejidad.Value)
+												{
+													case Complejidad.dificil:
+														<span class="badge border border-danger text-danger" style="width:50px">Dificil</span>
+														break;
+													case Complejidad.intermedio:
+														<span class="badge badge border border-warning  text-warning" style="width:50px">Inter</span>
+														break;
+													case Complejidad.facil:
+														<span class="badge border border-success text-success" style="width:50px">Facil</span>
+														break;
+												}
+											}
+											else
+											{
+												<span class="text-muted">-</span>
 											}
 										</td>
 										<td>
