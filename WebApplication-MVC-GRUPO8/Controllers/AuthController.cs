@@ -1,6 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using WebApplication_MVC_GRUPO8.Context;
 using WebApplication_MVC_GRUPO8.ViewModels;
+using System.Threading.Tasks;
+using System.Security.Claims;
+using System.Collections.Generic;
+
 namespace WebApplication_MVC_GRUPO8.Controllers
 {
     public class AuthController : Controller
@@ -13,6 +20,7 @@ namespace WebApplication_MVC_GRUPO8.Controllers
         }
 
         // GET: Login
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
@@ -20,22 +28,37 @@ namespace WebApplication_MVC_GRUPO8.Controllers
 
         // POST: Login
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
             // Buscar usuario
             var user = _context.Usuarios
-          .FirstOrDefault(u => u.email == model.Email && u.password == model.Password);
+                .FirstOrDefault(u => u.email == model.Email && u.password == model.Password);
 
             if (user == null)
             {
-                ModelState.AddModelError("", "Credenciales incorrectas");
+                ModelState.AddModelError(string.Empty, "Error de contraseña o usuario");
                 return View(model);
             }
 
-            // Guardar datos en sesión
+            // Crear claims y autenticar con cookies
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                new Claim(ClaimTypes.Name, $"{user.nombre} {user.apellido}"),
+                new Claim(ClaimTypes.Email, user.email ?? string.Empty),
+                new Claim(ClaimTypes.Role, user.rol.ToString())
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            // Guardar datos en sesión (opcional)
             HttpContext.Session.SetInt32("UserId", user.id);
             HttpContext.Session.SetString("UserNombre", $"{user.nombre} {user.apellido}");
             HttpContext.Session.SetString("UserRol", user.rol.ToString());
@@ -43,8 +66,10 @@ namespace WebApplication_MVC_GRUPO8.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        public IActionResult Logout()
+        [Authorize]
+        public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
