@@ -27,7 +27,7 @@
                             <label asp-for="texto" class="form-label">
                                  Comentario
                             </label>
-                            <input asp-for="texto" class="form-control" placeholder="Agregar comentario" />
+                            <textarea asp-for="texto" class="form-control" rows="4" placeholder="Agregar comentario"></textarea>
                             <span asp-validation-for="texto" class="text-danger"></span>
                         </div>
                         @* campo para enviar idIncidencia *@
@@ -40,7 +40,7 @@
                                 <i class="bi bi-arrow-left"></i> Volver
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                 Agregar comentario
+                                 Agregar
                             </button>
                         </div>
                     </form>
