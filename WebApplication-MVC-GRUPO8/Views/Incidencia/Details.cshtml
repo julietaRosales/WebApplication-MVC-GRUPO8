@@ -454,9 +454,9 @@
 				
 					@* USUARIO - No ve botones de acción, solo puede reportar *@
 				@if (rolActual == RolUsuario.usuario &&
-				Model.EstadoIncidencia == EstadoIncidencia.enReparacion ||
+				(Model.EstadoIncidencia == EstadoIncidencia.enReparacion ||
 				Model.EstadoIncidencia == EstadoIncidencia.reportado ||
-				Model.EstadoIncidencia == EstadoIncidencia.asignado
+				Model.EstadoIncidencia == EstadoIncidencia.asignado)
 				)
 					{
 							<div class="alert alert-info">
