@@ -27,16 +27,55 @@ namespace WebApplication_MVC_GRUPO8.Controllers
         }
 
         // INDEX - Listar todas las incidencias
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool mostrarTodas = true)
         {
-            var incidencias = await _context.Incidencias
+            int? idUsuarioActual = HttpContext.Session.GetInt32("UserId");
+            string rolString = HttpContext.Session.GetString("UserRol");
+
+            RolUsuario rol = Enum.Parse<RolUsuario>(rolString);
+
+            var query = _context.Incidencias
                 .Include(i => i.Usuario)
-                .Include(i => i.Categoria)
                 .Include(i => i.Tecnico)
-                .ToListAsync();
+                .AsQueryable();
+
+            List<Incidencia> incidencias;
+
+            if (mostrarTodas == false)
+            {
+                if (rol == RolUsuario.usuario)
+                {
+                    incidencias = await query
+                        .Where(i => i.idUsuario == idUsuarioActual)
+                        .ToListAsync();
+                }
+                else if (rol == RolUsuario.tecnico)
+                {
+                    incidencias = await query
+                        .Where(i => i.idTecnico == idUsuarioActual)
+                        .ToListAsync();
+                }
+                else if (rol == RolUsuario.encargado) {
+                    incidencias = await query
+                           .Where(i => i.idTecnico == idUsuarioActual)
+                           .ToListAsync();
+                }
+                else
+                {
+                    incidencias = await query.ToListAsync();
+                }
+            }
+            else
+            {
+                incidencias = await query.ToListAsync();
+            }
+
+            ViewBag.MostrarTodas = mostrarTodas;
+            ViewBag.Rol = rolString;
 
             return View(incidencias);
         }
+
         private void CargarCategorias()
         {
             ViewBag.Categorias = new SelectList(
