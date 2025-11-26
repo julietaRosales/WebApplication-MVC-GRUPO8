@@ -4,34 +4,45 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>Categoria</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        Editar categoria
+                    </h4>
+                </div>
+                <div class="card-body">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="id" />
-            <div class="form-group">
-                <label asp-for="nombre" class="control-label"></label>
-                <input asp-for="nombre" class="form-control" />
-                <span asp-validation-for="nombre" class="text-danger"></span>
-            </div>
+                        <div class="mb-3">
+                            <label asp-for="nombre" class="form-label">
+                                Nombre
+                            </label>
+                            <input asp-for="nombre" class="form-control" placeholder="Escribir nombre de la categoria" />
+                            <span asp-validation-for="nombre" class="text-danger"></span>
+                        </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="categoriaActivo" /> @Html.DisplayNameFor(model => model.categoriaActivo)
+                    Categoria Activa
+                 <input class="form-check-input" asp-for="categoriaActivo" /> 
                 </label>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a asp-action="Index" class="btn btn-danger">
+                                <i class="bi bi-arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Editar
+                            </button>
+                        </div>
         </form>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
