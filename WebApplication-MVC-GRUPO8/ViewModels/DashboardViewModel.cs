@@ -5,13 +5,10 @@ namespace WebApplication_MVC_GRUPO8.ViewModels
 {
     public class DashboardViewModel
     {
-        // Contadores
         public int Activas { get; set; }
         public int EnProceso { get; set; }
         public int Finalizadas { get; set; }
         public int Descartadas { get; set; }
-
-        // Recientes
         public List<Incidencia> Recientes { get; set; }
     }
 
