@@ -1,56 +1,65 @@
 ﻿@model IEnumerable<WebApplication_MVC_GRUPO8.Models.Incidencia>
 
 @{
-	ViewData["Title"] = "Incidencias";
+    ViewData["Title"] = "Incidencias";
+    string rol = ViewBag.Rol ?? "";
+    bool mostrarTodas = ViewBag.MostrarTodas ?? false;
 }
 
 <div class="container mt-4">
-	<div class="row">
-		<div class="col-md-12">
 
-			@* Título y botón de crear *@
-			<div class="d-flex justify-content-between align-items-center mb-4">
-				<h1>
-					Incidencias
-				</h1>
-				<a asp-action="Create" class="btn btn-primary">
-					<i class="bi bi-plus-circle"></i> Reportar Incidencia
-				</a>
-			</div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Incidencias</h1>
 
-			@* Mensaje de éxito (si existe) *@
-			@if (TempData["Success"] != null)
-			{
-				<div class="alert alert-success alert-dismissible fade show" role="alert">
-					<i class="bi bi-check-circle"></i> @TempData["Success"]
-					<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-				</div>
-			}
+        <div>
+            <a asp-action="Create" class="btn btn-primary me-2">
+                <i class="bi bi-plus-circle"></i> Reportar Incidencia
+            </a>
 
-			@* Tabla de incidencias *@
-			<div class="card shadow">
-				<div class="card-body">
-					<div class="table-responsive">
-						<table class="table table-hover">
-							<thead class="table-dark">
-								<tr>
-									<th>ID</th>
-									<th>Título</th>
-									<th>Estado</th>
-									<th>Reportado</th>
-									<th>Fecha Reportado</th>
+            @if (!mostrarTodas)
+            {
+                <a asp-action="Index" asp-route-mostrarTodas="true" class="btn btn-outline-dark">
+                    <i class="bi bi-list-ul"></i> Mostrar todas
+                </a>
+            }
+            else
+            {
+                <a asp-action="Index" asp-route-mostrarTodas="false" class="btn btn-outline-dark @(rol == "administrador" ? "disabled" : "")" >
+                    <i class="bi bi-person-badge"></i> Mostrar mis incidencias
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-white text-dark text-center">
+            <h4 class="m-0">
+                @(mostrarTodas ? "Todas las incidencias" : "Mis incidencias")
+            </h4>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Reportado</th>
+                            <th>Fecha Reportado</th>
 									<th>Prioridad</th>
 									<th>Complejidad</th>
-									<th>Asignado</th>
+                            <th>Asignado</th>
 									<th>Fecha Inicio</th>
 									<th>Fecha Fin</th>
-									<th class="text-center">Ver Detalle</th>
-								</tr>
-							</thead>
-							<tbody>
-								@foreach (var item in Model)
-								{
-									<tr>
+                            <th class="text-center">Ver Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
 										<td>
 											<strong>#@item.id</strong>
 										</td>
@@ -75,28 +84,28 @@
 											</div>
 										</td>
 										<td>
-											@switch (item.estadoIncidencia)
-											{
-												case EstadoIncidencia.reportado:
+                                    @switch (item.estadoIncidencia)
+                                    {
+                                        case EstadoIncidencia.reportado:
 													<span class="badge rounded-pill bg-info text-white" style="width:100px">REPORTADO</span>
-													break;
-												case EstadoIncidencia.asignado:
+                                            break;
+                                        case EstadoIncidencia.asignado:
 													<span class="badge rounded-pill bg-warning text-white" style="width:100px">ASIGNADO</span>
 													break;
-												case EstadoIncidencia.enReparacion:
+                                        case EstadoIncidencia.enReparacion:
 													<span class="badge rounded-pill bg-primary text-white" style="width:100px">REPARACIÓN</span>
 													break;
-												case EstadoIncidencia.descartado:
+                                        case EstadoIncidencia.descartado:
 													<span class="badge rounded-pill bg-danger text-white" style="width:100px">DESCARTADO</span>
 													break;
-												case EstadoIncidencia.finalizado:
+                                        case EstadoIncidencia.finalizado:
 													<span class="badge rounded-pill text-white" style="background-color:#8b78b8;width:100px">FINALIZADO</span>
 													break;
 												default:
 													<span class="badge rounded-pill bg-light text-white" style="background-color:#8b78b8; width:100px">@item.estadoIncidencia</span>
 													break;
-											}
-										</td>
+                                    }
+                                </td>
 
 										<td>
 											@if (item.Usuario != null)
@@ -180,30 +189,27 @@
 												<span class="text-muted">-</span>
 											}
 										</td>
-								<td class="text-center">
+                                <td class="text-center">
 									<div class="btn-group" role="group">
 										<a asp-action="Details" asp-route-id="@item.id"
 												   class="btn btn-sm btn btn-outline-secondary "
 												   title="Ver Detalles">
-											<i class="bi bi-eye"></i>
-										</a>
+                                        <i class="bi bi-eye"></i>
+                                    </a>
 									</div>
-								</td>
-							</tr>
-								}
-							</tbody>
-						</table>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-						@if (!Model.Any())
-						{
-							<div class="alert alert-info text-center mt-3">
-								<i class="bi bi-info-circle"></i> No hay incidencias registradas.
-								<br />
-							</div>
-						}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                @if (!Model.Any())
+                {
+                    <div class="alert alert-info text-center mt-3">
+                        <i class="bi bi-info-circle"></i> No hay incidencias para mostrar.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
