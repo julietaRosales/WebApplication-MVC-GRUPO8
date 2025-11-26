@@ -60,7 +60,7 @@
 												<span class="badge rounded-pill bg-warning fs-6">ASIGNADO</span>
 												break;
 											case EstadoIncidencia.enReparacion:
-												<span class="badge rounded-pill bg-primary fs-6">EN REPARACION</span>
+												<span class="badge rounded-pill bg-primary fs-6">REPARACIÓN</span>
 												break;
 											case EstadoIncidencia.descartado:
 												<span class="badge rounded-pill bg-danger fs-6">DESCARTADO</span>
@@ -131,13 +131,13 @@
 									@switch (Model.Prioridad.Value)
 									{
 										case Prioridad.alta:
-											<span class="badge bg-danger">ALTA</span>
+											<span class="badge border border-danger text-danger">ALTA</span>
 											break;
 										case Prioridad.media:
-											<span class="badge bg-warning text-dark">MEDIA</span>
+											<span class="badge border border-warning  text-warning">MEDIA</span>
 											break;
 										case Prioridad.baja:
-											<span class="badge bg-success">BAJA</span>
+											<span class="badge border border-success text-success">BAJA</span>
 											break;
 									}
 								}
@@ -149,13 +149,13 @@
 									@switch (Model.Complejidad.Value)
 									{
 										case Complejidad.dificil:
-											<span class="badge bg-danger">DIFICIL</span>
+											<span class="badge border border-danger text-danger">DIFICIL</span>
 											break;
 										case Complejidad.intermedio:
-											<span class="badge bg-warning text-dark">INTERMEDIO</span>
+											<span class="badge border border-warning  text-warning">INTERMEDIO</span>
 											break;
 										case Complejidad.facil:
-											<span class="badge bg-success">FACIL</span>
+											<span class="badge border border-success text-success">FACIL</span>
 											break;
 									}
 								}
@@ -376,7 +376,7 @@
 					@if (Model.EstadoIncidencia == EstadoIncidencia.enReparacion)
 					{
 						<a asp-action="Finalizar" asp-route-id="@Model.Id" class="btn btn-success">
-							@* <i class="bi bi-check-circle"></i> *@
+							<i class="bi bi-check-circle"></i>
 							Finalizar Reparación
 						</a>
 						<a asp-action="Descartar" asp-route-id="@Model.Id" class="btn btn-danger">
@@ -451,13 +451,17 @@
 									</a>
 					}
 					}
-
+				
 					@* USUARIO - No ve botones de acción, solo puede reportar *@
-					@if (rolActual == RolUsuario.usuario)
+				@if (rolActual == RolUsuario.usuario &&
+				Model.EstadoIncidencia == EstadoIncidencia.enReparacion ||
+				Model.EstadoIncidencia == EstadoIncidencia.reportado ||
+				Model.EstadoIncidencia == EstadoIncidencia.asignado
+				)
 					{
 							<div class="alert alert-info">
 								<i class="bi bi-info-circle"></i> 
-								Tu incidencia está siendo procesada por el equipo de mantenimiento.
+								Esta incidencia está siendo procesada por el equipo de mantenimiento.
 							</div>
 					}
 
